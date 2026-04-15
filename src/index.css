@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Base / Reset
+   ============================================================ */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg text-text-primary font-sans;
+    min-height: 100dvh;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-bg-surface;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-bg-elevated rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.3);
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(0, 212, 255, 0.3);
+    color: #E2E8F0;
+  }
+}
+
+/* ============================================================
+   Component Utilities
+   ============================================================ */
+@layer components {
+  /* Card */
+  .card {
+    @apply bg-bg-surface rounded-xl border border-border shadow-card;
+  }
+
+  .card-elevated {
+    @apply bg-bg-elevated rounded-xl border border-border shadow-card;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+
+  /* Button — Primary */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+           bg-accent text-bg font-sans font-semibold text-sm
+           hover:bg-accent-dim active:scale-95
+           transition-all duration-200 shadow-accent;
+  }
+
+  /* Button — Ghost */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+           bg-transparent text-text-muted font-sans text-sm
+           border border-border hover:border-border-accent hover:text-text-primary
+           transition-all duration-200;
+  }
+
+  /* Button — Danger */
+  .btn-danger {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+           bg-danger/10 text-danger font-sans font-semibold text-sm
+           border border-danger/30 hover:bg-danger/20
+           transition-all duration-200;
+  }
+
+  /* Input */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl
+           bg-bg-elevated border border-border
+           text-text-primary font-sans text-sm placeholder:text-text-dim
+           focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30
+           transition-colors duration-200;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+           font-mono text-xs font-medium;
+  }
+
+  .badge-accent {
+    @apply badge bg-accent/10 text-accent border border-border-accent;
+  }
+
+  .badge-success {
+    @apply badge bg-success/10 text-success border border-success/30;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning/10 text-warning border border-warning/30;
+  }
+
+  .badge-danger {
+    @apply badge bg-danger/10 text-danger border border-danger/30;
+  }
+
+  /* LED Indicator */
+  .led {
+    @apply w-3 h-3 rounded-full border-2 transition-all duration-200;
+  }
+
+  .led-green {
+    @apply led bg-success border-success/50 shadow-[0_0_8px_rgba(34,197,94,0.8)];
+  }
+
+  .led-red {
+    @apply led bg-danger border-danger/50 shadow-[0_0_8px_rgba(239,68,68,0.8)];
+  }
+
+  .led-yellow {
+    @apply led bg-warning border-warning/50 shadow-[0_0_8px_rgba(245,158,11,0.8)];
+  }
+
+  .led-off {
+    @apply led bg-bg-elevated border-border;
+  }
+
+  /* Section Header */
+  .section-header {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  .section-title {
+    @apply font-mono text-xl font-bold text-text-primary;
+  }
+
+  .section-subtitle {
+    @apply font-sans text-sm text-text-muted mt-1;
+  }
+}
