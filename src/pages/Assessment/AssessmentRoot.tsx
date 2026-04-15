@@ -66,7 +66,7 @@ export default function AssessmentRoot() {
                 <Button 
                    size="sm" 
                    rightIcon={<ArrowRight size={14} />}
-                   onClick={() => startQuiz(lvl.id as any)}
+                   onClick={() => startQuiz(parseInt(lvl.id.replace('level-', '')) as any)}
                 >
                   Mulai Ujian
                 </Button>
