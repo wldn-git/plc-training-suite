@@ -5,7 +5,7 @@ import LearningIndex from '@/pages/Learning/LearningIndex';
 import ModuleDetail from '@/pages/Learning/ModuleDetail';
 import SimulatorCanvas from '@/pages/Simulator/SimulatorCanvas';
 import PLCList from '@/pages/Database/PLCList';
-import QuizSelector from '@/pages/Assessment/QuizSelector';
+import AssessmentRoot from './pages/Assessment/AssessmentRoot';
 import SettingsPage from '@/pages/Settings/index';
 
 // ============================================================
@@ -32,7 +32,7 @@ function App() {
           <Route path="database" element={<PLCList />} />
 
           {/* Assessment */}
-          <Route path="assessment" element={<QuizSelector />} />
+          <Route path="assessment" element={<AssessmentRoot />} />
 
           {/* Settings */}
           <Route path="settings" element={<SettingsPage />} />

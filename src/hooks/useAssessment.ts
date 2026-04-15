@@ -22,8 +22,10 @@ export function useAssessment() {
   }, [store.isRunning, store.timeRemaining]);
 
   const startQuiz = useCallback((level: QuizLevel) => {
+    console.log('Starting quiz for level:', level);
     // Pick 10 random questions from the level
     const levelQuestions = QUIZ_BANK.filter(q => q.category === level);
+    console.log('Found questions for level:', levelQuestions.length);
     const shuffled = [...levelQuestions].sort(() => 0.5 - Math.random()).slice(0, 10);
     
     // Aligned set questions to store
