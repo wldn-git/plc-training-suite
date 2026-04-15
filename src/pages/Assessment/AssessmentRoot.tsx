@@ -147,39 +147,100 @@ export default function AssessmentRoot() {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
       const { score, level, id } = lastSession;
       
-      // Industrial Style Background
-      doc.setFillColor(10, 12, 18); 
+      // Deep Charcoal Background
+      doc.setFillColor(15, 20, 25); 
       doc.rect(0, 0, 297, 210, 'F');
       
-      // Accents
+      // Left Edge Accent Anchor
+      doc.setFillColor(0, 212, 255);
+      doc.rect(0, 0, 8, 210, 'F');
+      
+      // Professional Outer & Inner Border
+      doc.setDrawColor(255, 255, 255);
+      doc.setLineWidth(0.4);
+      doc.rect(16, 12, 269, 186); // Outer white
       doc.setDrawColor(0, 212, 255);
-      doc.setLineWidth(1);
-      doc.rect(5, 5, 287, 200);
-      doc.setLineWidth(0.2);
-      doc.rect(7, 7, 283, 196);
+      doc.setLineWidth(0.15);
+      doc.rect(18, 14, 265, 182); // Inner cyan
       
-      // Text
-      doc.setTextColor(0, 212, 255);
+      // Faint Watermark
+      doc.setTextColor(25, 30, 36);
+      doc.setFontSize(100);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(36);
-      doc.text('CERTIFICATE OF ACHIEVEMENT', 148.5, 55, { align: 'center' });
+      doc.text("WLDN", 148.5, 130, { align: 'center', angle: 25 });
       
+      // Main Header
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(14);
-      doc.text('This is to certify that you have successfully validated your expertise in', 148.5, 80, { align: 'center' });
-      
-      doc.setTextColor(0, 212, 255);
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(28);
-      doc.text(`PLC AUTOMATION SPECIALIST - LEVEL ${level}`, 148.5, 100, { align: 'center' });
+      doc.text('CERTIFICATE OF EXCELLENCE', 148.5, 45, { align: 'center' });
       
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(18);
-      doc.text(`WITH A FINAL SCORE OF ${score}%`, 148.5, 120, { align: 'center' });
+      // Subtitle
+      doc.setTextColor(0, 212, 255);
+      doc.setFontSize(12);
+      doc.setFont('times', 'italic');
+      doc.text('INDUSTRIAL AUTOMATION & CONTROL SYSTEMS', 148.5, 53, { align: 'center' });
       
-      doc.setFontSize(10);
-      doc.setTextColor(100, 116, 139);
-      doc.text(`Verification ID: ${id.substring(0, 18).toUpperCase()}`, 148.5, 175, { align: 'center' });
-      doc.text(`Issued by PLC Training Suite Digital Academy on ${new Date().toLocaleDateString()}`, 148.5, 182, { align: 'center' });
+      // Certification Text
+      doc.setTextColor(200, 200, 200);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('This document officially certifies that the candidate has demonstrated', 148.5, 78, { align: 'center' });
+      doc.text('exceptional proficiency and technical competence in the discipline of:', 148.5, 84, { align: 'center' });
+      
+      // Program Level
+      doc.setTextColor(0, 212, 255);
+      doc.setFontSize(26);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`PLC ENGINEERING - LEVEL ${level}`, 148.5, 105, { align: 'center' });
+      
+      // Score Block
+      doc.setFillColor(0, 212, 255);
+      doc.rect(125.5, 118, 46, 12, 'F');
+      doc.setTextColor(15, 20, 25);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`SCORE: ${score}%`, 148.5, 126.5, { align: 'center' });
+      
+      // Signature Section Left (WLDN TECH)
+      doc.setDrawColor(100, 100, 100);
+      doc.setLineWidth(0.3);
+      doc.line(60, 165, 120, 165);
+      doc.setTextColor(230, 230, 230);
+      doc.setFontSize(11);
+      doc.setFont('times', 'bolditalic');
+      doc.text("WLDN Tech Academy", 90, 163, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(130, 130, 130);
+      doc.text("Lead Automation Instructor", 90, 172, { align: 'center' });
+      
+      // Digital Badge Center
+      doc.setDrawColor(0, 212, 255);
+      doc.setLineWidth(0.8);
+      doc.circle(148.5, 160, 12);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6);
+      doc.setTextColor(0, 212, 255);
+      doc.text("VERIFIED", 148.5, 159, { align: 'center' });
+      doc.text("A W A R D", 148.5, 163, { align: 'center' });
+      
+      // Date Section Right
+      doc.setDrawColor(100, 100, 100);
+      doc.setLineWidth(0.3);
+      doc.line(177, 165, 237, 165);
+      doc.setTextColor(230, 230, 230);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.text(new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }), 207, 162, { align: 'center' });
+      doc.setFontSize(9);
+      doc.setTextColor(130, 130, 130);
+      doc.text("Date of Issuance", 207, 172, { align: 'center' });
+      
+      // Footer Verification ID
+      doc.setFontSize(7);
+      doc.setTextColor(60, 70, 80);
+      doc.text(`Official Verification ID: ${id.toUpperCase()}`, 148.5, 192, { align: 'center' });
       
       // Buka PDF di tab baru agar user bisa lihat dulu dan save manual
       const pdfBlob = doc.output('blob');
