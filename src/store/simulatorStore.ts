@@ -36,6 +36,8 @@ interface SimulatorState {
   updateCounters: (counters: CounterState[]) => void;
   setActiveRungs: (ids: string[]) => void;
   incrementScanCount: () => void;
+  addElementToRung: (rungId: string, instruction: string) => void;
+  addRung: () => void;
   reset: () => void;
 }
 
@@ -89,6 +91,38 @@ export const useSimulatorStore = create<SimulatorState>((set) => ({
   updateCounters: (counters) => set({ counters }),
   setActiveRungs: (ids) => set({ activeRungIds: new Set(ids) }),
   incrementScanCount: () => set((state) => ({ scanCount: state.scanCount + 1 })),
+
+  addElementToRung: (rungId: string, instruction: string) =>
+    set((state) => ({
+      rungs: state.rungs.map((r) =>
+        r.id === rungId
+          ? {
+              ...r,
+              elements: [
+                ...r.elements,
+                {
+                  id: crypto.randomUUID(),
+                  instruction: instruction as any,
+                  operand: instruction.startsWith('T') ? 'T0' : instruction.startsWith('C') ? 'C0' : 'X0',
+                  position: { row: 0, col: r.elements.length },
+                },
+              ],
+            }
+          : r
+      ),
+    })),
+
+  addRung: () =>
+    set((state) => ({
+      rungs: [
+        ...state.rungs,
+        {
+          id: crypto.randomUUID(),
+          comment: '',
+          elements: [],
+        },
+      ],
+    })),
 
   reset: () => set({ ...initialState, activeRungIds: new Set<string>() }),
 }));

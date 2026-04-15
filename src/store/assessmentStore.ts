@@ -1,18 +1,17 @@
 import { create } from 'zustand';
-import type { Question, QuizSession, QuizCategory, QuizDifficulty, AnswerRecord } from '@/types/assessment.types';
+import type { QuizLevel, QuizQuestion, QuizSession, AnswerRecord } from '@/types/assessment.types';
 
 // ============================================================
-// Assessment Store — State Quiz Aktif
+// Assessment Store — Integrated with QuizLevel (Task 19/20)
 // ============================================================
 
 interface AssessmentState {
   // Config
-  selectedCategory: QuizCategory | null;
-  selectedDifficulty: QuizDifficulty | null;
+  selectedCategory: QuizLevel | null;
 
   // Active Session
   activeSession: Partial<QuizSession> | null;
-  questions: Question[];
+  questions: QuizQuestion[];
   currentQuestionIndex: number;
   answers: AnswerRecord[];
   timeRemaining: number;   // detik
@@ -22,7 +21,7 @@ interface AssessmentState {
   lastSession: QuizSession | null;
 
   // Actions
-  startSession: (category: QuizCategory, difficulty: QuizDifficulty, questions: Question[]) => void;
+  startSession: (level: QuizLevel, currentProject: any, questions: QuizQuestion[]) => void;
   submitAnswer: (answer: AnswerRecord) => void;
   nextQuestion: () => void;
   endSession: (score: number) => void;
@@ -32,7 +31,6 @@ interface AssessmentState {
 
 export const useAssessmentStore = create<AssessmentState>((set, get) => ({
   selectedCategory: null,
-  selectedDifficulty: null,
   activeSession: null,
   questions: [],
   currentQuestionIndex: 0,
@@ -41,18 +39,16 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
   isRunning: false,
   lastSession: null,
 
-  startSession: (category, difficulty, questions) =>
+  startSession: (level, _, questions) =>
     set({
-      selectedCategory: category,
-      selectedDifficulty: difficulty,
+      selectedCategory: level,
       questions,
       currentQuestionIndex: 0,
       answers: [],
       timeRemaining: 15 * 60,
       isRunning: true,
       activeSession: {
-        category,
-        difficulty,
+        level,
         totalQuestions: questions.length,
       },
     }),
@@ -69,8 +65,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     const state = get();
     const session: QuizSession = {
       id: crypto.randomUUID(),
-      category: state.selectedCategory!,
-      difficulty: state.selectedDifficulty!,
+      level: state.selectedCategory!,
       score,
       totalQuestions: state.questions.length,
       correctCount: state.answers.filter((a) => a.isCorrect).length,
@@ -87,12 +82,12 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
   resetAssessment: () =>
     set({
       selectedCategory: null,
-      selectedDifficulty: null,
       activeSession: null,
       questions: [],
       currentQuestionIndex: 0,
       answers: [],
       timeRemaining: 15 * 60,
       isRunning: false,
+      lastSession: null,
     }),
 }));

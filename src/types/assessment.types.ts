@@ -1,37 +1,29 @@
 // ============================================================
-// Assessment / Quiz Types
+// Assessment / Quiz Types — Aligned with Task 19
 // ============================================================
 
-export type QuizCategory = 'dasar' | 'io' | 'instruksi' | 'lanjutan';
-export type QuizDifficulty = 'mudah' | 'sedang' | 'sulit';
+export type QuizLevel = 1 | 2 | 3 | 4;
 
-export interface QuizOption {
+export interface QuizQuestion {
   id: string;
-  text: string;
-}
-
-export interface Question {
-  id: string;
-  category: QuizCategory;
-  difficulty: QuizDifficulty;
+  category: QuizLevel;      // Level 1-4 as requested
   question: string;
-  options: QuizOption[];
-  correctOptionId: string;
+  options: string[];        // Array string [4]
+  correctIndex: number;     // 0-3
   explanation?: string;
   imageUrl?: string;
 }
 
 export interface AnswerRecord {
   questionId: string;
-  selectedOptionId: string;
+  selectedIndex: number;
   isCorrect: boolean;
   timeTaken: number;       // detik
 }
 
 export interface QuizSession {
   id: string;
-  category: QuizCategory;
-  difficulty: QuizDifficulty;
+  level: QuizLevel;
   score: number;           // 0–100
   totalQuestions: number;
   correctCount: number;
@@ -44,8 +36,8 @@ export interface QuizSession {
 export interface Certificate {
   id: string;
   quizSessionId: string;
-  recipientName: string;
-  category: QuizCategory;
+  userName: string;
+  level: QuizLevel;
   score: number;
   issuedAt: Date;
 }

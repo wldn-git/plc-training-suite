@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# PLC Training Suite (PLTS) - v1.0.0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![PLC Banner](https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000)
 
-Currently, two official plugins are available:
+**PLC Training Suite (PLTS)** adalah platform edukasi progresif (PWA) yang dirancang untuk membantu teknisi dan pelajar menguasai sistem otomasi industri. Platform ini menggabungkan kurikulum tersertifikasi dengan simulator ladder logic real-time yang dapat diakses sepenuhnya secara offline.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Fitur Utama
 
-## React Compiler
+- **Real-time Simulator Engine**: Eksekusi logika ladder (LD, TON, CTU, SET/RST) dengan visualisasi aliran daya yang interaktif.
+- **Visual Ladder Editor**: Interface drag-and-drop untuk membangun logika PLC tanpa perlu hardware fisik.
+- **LMS (Learning Management System)**: Kurikulum 4 level dari dasar hingga industrial avançado.
+- **Sertifikasi Digital**: Uji kompetensi dan dapatkan sertifikat PDF resmi setelah lulus ujian minimal skor 80%.
+- **Hardware Database**: Katalog perangkat PLC industri (Siemens, Mitsubishi, Allen Bradley, dll) yang dapat dikelola sendiri.
+- **Offline First (PWA)**: Berjalan mulus tanpa internet. Simpan progres belajar dan desain simulator di database lokal (Dexie.js).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Stack Teknologi
 
-## Expanding the ESLint configuration
+- **Core**: React 18, TypeScript, Vite
+- **Styling**: Vanilla CSS (Premium Industrial Dark Theme)
+- **State**: Zustand (Store Management)
+- **Database**: Dexie.js (IndexedDB wrapper for production reliability)
+- **Animations**: Framer Motion
+- **PWA**: vite-plugin-pwa (Workbox caching strategies)
+- **PDF**: jsPDF
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📦 Instalasi & Pengembangan
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Clone repository:
+   ```bash
+   git clone [repository-url]
+   ```
+2. Instal dependensi:
+   ```bash
+   npm install
+   ```
+3. Jalankan development server:
+   ```bash
+   npm run dev
+   ```
+4. Build untuk produksi:
+   ```bash
+   npm run build
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🏗️ Struktur Proyek
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `/src/lib/simulators`: Logika inti scan cycle dan instruksi PLC.
+- `/src/store`: State global untuk UI, simulator, dan assessment.
+- `/src/pages`: Implementasi view (Dashboard, Learning, Simulator, Assessment).
+- `/src/components/plc-visuals`: Komponen UI khusus simulasi industrial.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+Developed by **WLDN-SOFT-PRO**. 
+*Advancing Industrial Automation Education in Indonesia.*
