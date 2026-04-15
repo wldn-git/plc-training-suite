@@ -181,7 +181,22 @@ export default function AssessmentRoot() {
       doc.text(`Verification ID: ${id.substring(0, 18).toUpperCase()}`, 148.5, 175, { align: 'center' });
       doc.text(`Issued by PLC Training Suite Digital Academy on ${new Date().toLocaleDateString()}`, 148.5, 182, { align: 'center' });
       
-      doc.save(`PLC_Sertifikat_Lvl${level}.pdf`);
+      // Foolproof PDF Download (Prevents browser from downloading blob UUID as filename due to PWA SW interception)
+      const filename = `PLC_Sertifikat_Lvl${level}.pdf`;
+      const dataUri = doc.output('datauristring', { filename });
+      
+      const link = document.createElement('a');
+      link.href = dataUri;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      
+      link.click();
+      
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 500);
     };
 
     return (
