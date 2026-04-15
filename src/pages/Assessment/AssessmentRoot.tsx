@@ -43,18 +43,18 @@ export default function AssessmentRoot() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {LEARNING_LEVELS.map((lvl) => (
-            <Card key={lvl.level} hoverable className="p-6 group relative overflow-hidden">
+            <Card key={lvl.id} hoverable className="p-6 group relative overflow-hidden">
               <div className="flex justify-between items-start mb-6 relative z-10">
                 <div className="w-12 h-12 rounded-xl bg-bg-elevated border border-border flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
                   <ClipboardCheck size={24} />
                 </div>
-                <Badge variant={lvl.color as any}>Level {lvl.level}</Badge>
+                <Badge variant={lvl.color as any}>{lvl.title.split(':')[0]}</Badge>
               </div>
               
               <div className="relative z-10">
                 <h3 className="font-mono text-xl font-bold mb-2 group-hover:text-accent transition-colors">{lvl.title}</h3>
                 <p className="text-text-muted text-xs mb-6 line-clamp-2">
-                  Ujian mencakup teori arsitektur PLC, pemrograman ladder, dan troubleshooting sistem level {lvl.level}.
+                  Ujian mencakup teori arsitektur PLC, pemrograman ladder, dan troubleshooting {lvl.title.split(':')[0]}.
                 </p>
               </div>
               
@@ -66,7 +66,7 @@ export default function AssessmentRoot() {
                 <Button 
                    size="sm" 
                    rightIcon={<ArrowRight size={14} />}
-                   onClick={() => startQuiz(lvl.level as any)}
+                   onClick={() => startQuiz(lvl.id as any)}
                 >
                   Mulai Ujian
                 </Button>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { LEARNING_MODULES, LEARNING_LEVELS } from '@/constants/learningModules';
+import { LEARNING_LEVELS } from '@/constants/learningModules';
 import { useProgress } from '@/hooks/useProgress';
 import { Card, Badge } from '@/components/ui';
 import { BookOpen, CheckCircle2, Clock, ArrowRight } from 'lucide-react';
@@ -34,10 +34,10 @@ export default function LearningIndex() {
 
       {/* Level Sections */}
       {LEARNING_LEVELS.map((levelDef) => {
-        const modulesInLevel = LEARNING_MODULES.filter(m => m.level === levelDef.level);
+        const modulesInLevel = levelDef.modules;
         
         return (
-          <div key={levelDef.level} className="space-y-4">
+          <div key={levelDef.id} className="space-y-4">
             <div className="flex items-center gap-3">
               <Badge variant={levelDef.color as any} className="text-xs">{levelDef.title}</Badge>
               <div className="h-[1px] flex-1 bg-border/50" />
@@ -65,7 +65,7 @@ export default function LearningIndex() {
                           {isCompleted ? <CheckCircle2 size={20} /> : <BookOpen size={20} />}
                         </div>
                         <Badge variant="default" className="flex items-center gap-1">
-                          <Clock size={10} /> {mod.duration}
+                          <Clock size={10} /> {mod.estimatedMinutes} min
                         </Badge>
                       </div>
 

@@ -4,7 +4,7 @@ import { useProgress } from '@/hooks/useProgress';
 import { Card, Badge, Button } from '@/components/ui';
 import { BookOpen, Award, Cpu, Zap, ArrowRight, History, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { LEARNING_MODULES } from '@/constants/learningModules';
+import { ALL_MODULES } from '@/constants/learningModules';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -27,8 +27,8 @@ export default function Dashboard() {
   const streak = calculateStreak();
   const lastModuleRecord = getLastOpenedModule();
   const lastModule = lastModuleRecord 
-    ? LEARNING_MODULES.find(m => m.id === lastModuleRecord.moduleId)
-    : LEARNING_MODULES[0];
+    ? ALL_MODULES.find(m => m.id === lastModuleRecord.moduleId)
+    : ALL_MODULES[0];
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 max-w-7xl mx-auto">
@@ -103,7 +103,7 @@ export default function Dashboard() {
             <Button variant="ghost" size="sm" onClick={() => navigate('/learning')}>View All Modules</Button>
           </div>
           {lastModule && (
-            <Card hoverable className="p-6 group cursor-pointer border-border/40" onClick={() => navigate(`/learning/${lastModule.slug}`)}>
+            <Card hoverable className="p-6 group cursor-pointer border-border/40" onClick={() => navigate(`/learning/${lastModule.id}`)}>
               <div className="flex items-center gap-5">
                  <div className="w-16 h-16 rounded-2xl bg-bg-elevated border border-border flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
                    <History size={32} />
@@ -112,7 +112,7 @@ export default function Dashboard() {
                    <h4 className="font-mono text-lg font-bold text-text-primary group-hover:text-accent transition-colors">
                      {lastModule.title}
                    </h4>
-                   <p className="text-xs text-text-muted mt-1">Level {lastModule.level} • {lastModule.duration} estimated read</p>
+                   <p className="text-xs text-text-muted mt-1">{lastModule.levelId.replace('level-', 'Level ')} • {lastModule.estimatedMinutes} min estimated read</p>
                  </div>
                  <ArrowRight size={20} className="text-text-dim group-hover:translate-x-1 transition-transform" />
               </div>
