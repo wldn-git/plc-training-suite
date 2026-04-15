@@ -129,8 +129,10 @@ export default function ModuleDetail() {
     );
   }
 
-  const currentPage = module.pages[currentPageIndex];
-  const isLastPage = currentPageIndex === module.pages.length - 1;
+  // Prevent React race condition where currentPageIndex hasn't been reset by useEffect yet
+  const safePageIndex = Math.min(currentPageIndex, module.pages.length - 1);
+  const currentPage = module.pages[safePageIndex];
+  const isLastPage = safePageIndex === module.pages.length - 1;
 
   const handleNextPage = () => {
     if (!isLastPage) setCurrentPageIndex(c => c + 1);
@@ -174,7 +176,7 @@ export default function ModuleDetail() {
         <div className="absolute top-0 left-0 w-full h-1 bg-border/30">
           <div 
              className="h-full bg-accent transition-all duration-300" 
-             style={{ width: `${((currentPageIndex + 1) / module.pages.length) * 100}%` }}
+             style={{ width: `${((safePageIndex + 1) / module.pages.length) * 100}%` }}
           />
         </div>
 
@@ -201,7 +203,7 @@ export default function ModuleDetail() {
         <div className="p-8 lg:p-12 min-h-[400px]">
           <h2 className="text-2xl font-mono font-bold text-accent mb-8 pb-3 border-b border-white/10 flex justify-between items-end">
             <span>{currentPage.title}</span>
-            <span className="text-xs text-text-dim font-mono bg-bg-elevated px-2 py-1 rounded">Page {currentPageIndex + 1} of {module.pages.length}</span>
+            <span className="text-xs text-text-dim font-mono bg-bg-elevated px-2 py-1 rounded">Page {safePageIndex + 1} of {module.pages.length}</span>
           </h2>
 
           <div className="space-y-6">
@@ -214,7 +216,7 @@ export default function ModuleDetail() {
         {/* Action Footer */}
         <div className="px-8 py-6 bg-bg-elevated/50 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex gap-3 w-full sm:w-auto overflow-x-auto scrollbar-hide shrink-0">
-            {currentPageIndex > 0 ? (
+            {safePageIndex > 0 ? (
               <Button variant="outline" leftIcon={<ArrowLeft size={18} />} onClick={handlePrevPage}>Halaman Seb.</Button>
             ) : prevModule ? (
               <Button variant="ghost" leftIcon={<ArrowLeft size={18} />} onClick={() => navigate(`/learning/${prevModule.id}`)}>Modul Seb.</Button>
