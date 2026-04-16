@@ -1,96 +1,159 @@
-import { useEffect, useCallback, useMemo } from 'react';
-import { useAssessmentStore } from '@/store/assessmentStore';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { QUIZ_BANK } from '@/constants/quizBank';
 import { db } from '@/lib/db/db';
-import type { QuizLevel, AnswerRecord } from '@/types/assessment.types';
+import type { QuizLevel, AnswerRecord, QuizQuestion, QuizSession } from '@/types/assessment.types';
+
+// ─── Types Implementation ──────────────────────────────────
+// Note: We use the project's assessment.types.ts as truth.
+// But we add Phase to manage state machine in Index.
+
+export type AssessmentPhase =
+  | 'idle'       // Belum mulai
+  | 'session'    // Quiz sedang berjalan
+  | 'result';    // Quiz selesai, tampilkan hasil
+
+export interface QuizConfig {
+  level: QuizLevel;
+  questionCount: number;
+  timeLimitSeconds: number;
+}
 
 export function useAssessment() {
-  const store = useAssessmentStore();
+  const [phase, setPhase] = useState<AssessmentPhase>('idle');
+  const [session, setSession] = useState<QuizSession | null>(null);
+  
+  // Quiz State
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
+  const [timeLeft, setTimeLeft] = useState(900);
+  const [selectedLevel, setSelectedLevel] = useState<QuizLevel | null>(null);
 
-  // Timer Tick
-  useEffect(() => {
-    let timer: number;
-    if (store.isRunning && store.timeRemaining > 0) {
-      timer = window.setInterval(() => {
-        store.setTimeRemaining(store.timeRemaining - 1);
-      }, 1000);
-    } else if (store.timeRemaining === 0 && store.isRunning) {
-      // Auto-submit when time up
-      finishQuiz();
+  // Timer Ref
+  const timerRef = useRef<number | null>(null);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-    return () => clearInterval(timer);
-  }, [store.isRunning, store.timeRemaining]);
+  }, []);
+
+  const startTimer = useCallback((seconds: number) => {
+    stopTimer();
+    setTimeLeft(seconds);
+    timerRef.current = window.setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          stopTimer();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, [stopTimer]);
+
+  const finishQuiz = useCallback(async (finalAnswers: AnswerRecord[], finalQuestions: QuizQuestion[]) => {
+    stopTimer();
+    
+    // Ensure all questions have answers (fill missing with incorrect)
+    const allAnswers = [...finalAnswers];
+    for (let i = allAnswers.length; i < finalQuestions.length; i++) {
+        allAnswers.push({
+            questionId: finalQuestions[i].id,
+            selectedIndex: -1, // -1 means no answer
+            isCorrect: false,
+            timeTaken: 0
+        });
+    }
+
+    const correctCount = allAnswers.filter(a => a.isCorrect).length;
+    const score = Math.round((correctCount / finalQuestions.length) * 100);
+    const duration = 900 - timeLeft; // Assuming 15 mins default
+
+    const newSession: QuizSession = {
+      id: crypto.randomUUID(),
+      level: selectedLevel!,
+      score,
+      totalQuestions: finalQuestions.length,
+      correctCount,
+      duration,
+      answers: allAnswers,
+      certified: score >= 80,
+      completedAt: new Date(),
+    };
+
+    // Save to Dexie
+    await db.quizHistory.add(newSession);
+    
+    setSession(newSession);
+    setPhase('result');
+  }, [selectedLevel, stopTimer, timeLeft]);
 
   const startQuiz = useCallback((level: QuizLevel) => {
-    console.log('Starting quiz for level:', level);
-    // Pick 10 random questions from the level
-    const levelQuestions = QUIZ_BANK.filter(q => q.category === level);
-    console.log('Found questions for level:', levelQuestions.length);
-    const shuffled = [...levelQuestions].sort(() => 0.5 - Math.random()).slice(0, 10);
+    const pool = QUIZ_BANK.filter(q => q.category === level);
+    const shuffled = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
     
-    // Aligned set questions to store
-    // QuizQuestion is already formatted with id, options, etc.
-    store.startSession(level, 0, shuffled as any); // Type cast if necessary, but should match
-  }, [store]);
+    setSelectedLevel(level);
+    setQuestions(shuffled);
+    setCurrentIndex(0);
+    setAnswers([]);
+    setPhase('session');
+    startTimer(900); // 15 mins
+  }, [startTimer]);
 
   const submitAnswer = useCallback((selectedIndex: number) => {
-    const question = store.questions[store.currentQuestionIndex];
+    const question = questions[currentIndex];
     if (!question) return;
 
     const isCorrect = question.correctIndex === selectedIndex;
-    
     const record: AnswerRecord = {
       questionId: question.id,
       selectedIndex,
       isCorrect,
-      timeTaken: 0, // Simplified for now
+      timeTaken: 0,
     };
 
-    store.submitAnswer(record);
+    const newAnswers = [...answers, record];
+    setAnswers(newAnswers);
 
-    if (store.currentQuestionIndex < store.questions.length - 1) {
-      store.nextQuestion();
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(prev => prev + 1);
     } else {
-      finishQuiz();
+      finishQuiz(newAnswers, questions);
     }
-  }, [store]);
+  }, [answers, currentIndex, finishQuiz, questions]);
 
-  const finishQuiz = useCallback(async () => {
-    const correctCount = store.answers.filter(a => a.isCorrect).length;
-    // Calculate including the current one if it was just submitted 
-    // (but submitAnswer already adds it)
-    const score = Math.round((correctCount / store.questions.length) * 100);
+  const reset = useCallback(() => {
+    stopTimer();
+    setPhase('idle');
+    setSession(null);
+    setQuestions([]);
+    setCurrentIndex(0);
+    setAnswers([]);
+    setTimeLeft(900);
+  }, [stopTimer]);
 
-    // Save to Dexie
-    await db.quizHistory.add({
-      id: crypto.randomUUID(),
-      level: store.selectedCategory as any,
-      score,
-      totalQuestions: store.questions.length,
-      correctCount: correctCount,
-      duration: 15 * 60 - store.timeRemaining,
-      answers: store.answers,
-      certified: score >= 80,
-      completedAt: new Date(),
-    });
+  // Derived state
+  const currentQuestion = questions[currentIndex];
 
-    store.endSession(score);
-  }, [store]);
-
-  const currentQuestion = useMemo(() => {
-    return store.questions[store.currentQuestionIndex];
-  }, [store.questions, store.currentQuestionIndex]);
+  useEffect(() => {
+    if (phase === 'session' && timeLeft === 0) {
+      finishQuiz(answers, questions);
+    }
+  }, [phase, timeLeft, answers, questions, finishQuiz]);
 
   return {
-    isRunning: store.isRunning,
+    phase,
+    session,
+    questions,
+    currentIndex,
     currentQuestion,
-    currentIndex: store.currentQuestionIndex,
-    totalQuestions: store.questions.length,
-    timeRemaining: store.timeRemaining,
-    answers: store.answers,
-    lastSession: store.lastSession,
+    answers,
+    timeLeft,
     startQuiz,
     submitAnswer,
-    reset: store.resetAssessment,
+    reset,
+    totalQuestions: questions.length,
   };
 }

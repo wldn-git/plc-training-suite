@@ -6,7 +6,7 @@ import Dashboard from '@/pages/Dashboard/index';
 import LearningIndex from '@/pages/Learning/LearningIndex';
 import ModuleDetail from '@/pages/Learning/ModuleDetail';
 import PLCList from '@/pages/Database/PLCList';
-import AssessmentRoot from './pages/Assessment/AssessmentRoot';
+import AssessmentIndex from './pages/Assessment/index';
 import SettingsPage from '@/pages/Settings/index';
 import PlantSandbox from '@/pages/PlantSandbox/index';
 import { useUserStore } from '@/store/userStore';
@@ -70,7 +70,7 @@ function App() {
           <Route path="database" element={<PLCList />} />
 
           {/* Assessment */}
-          <Route path="assessment" element={<AssessmentRoot />} />
+          <Route path="assessment" element={<AssessmentIndex />} />
 
           {/* Settings */}
           <Route path="settings" element={<SettingsPage />} />
