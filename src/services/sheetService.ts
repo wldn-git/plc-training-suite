@@ -23,11 +23,6 @@ export interface QuizResultData {
 
 export const sheetService = {
   async send(data: RegistrationData | QuizResultData) {
-    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-      console.warn('Sheets URL not configured, skipping cloud sync.');
-      return;
-    }
-
     try {
       const response = await fetch(SCRIPT_URL, {
         method: 'POST',
