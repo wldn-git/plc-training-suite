@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Card, Button, Badge, Input } from '@/components/ui';
 import { 
-  Database, Server, Cpu, Activity, 
-  ArrowRightLeft, Box, Globe, Zap, Terminal, Network
+  Server, Cpu, Activity, 
+  Box, Globe, Zap, Terminal, Network
 } from 'lucide-react';
 import mqtt, { MqttClient } from 'mqtt';
 
@@ -16,7 +16,7 @@ export function ModbusSim() {
   const [role, setRole] = useState<'master' | 'slave'>('slave');
   const [userIp, setUserIp] = useState(`192.168.1.${Math.floor(Math.random() * 254) + 1}`);
   const [targetIp, setTargetIp] = useState('192.168.1.10');
-  const [unitId, setUnitId] = useState(1);
+  const [unitId] = useState(1);
   const clientRef = useRef<MqttClient | null>(null);
   
   // ==========================================
@@ -53,7 +53,7 @@ export function ModbusSim() {
     client.on('connect', () => {
       // Listen to own IP messages
       client.subscribe(`plts/modbus/ip/${userIp}/#`);
-      setTraffic(prev => [{ id: 'init', msg: `NETWORK ONLINE: IP ${userIp}`, type: 'info' }, ...prev]);
+      setTraffic(prev => [{ id: 'init', msg: `NETWORK ONLINE: IP ${userIp}`, type: 'info' as const }, ...prev]);
     });
 
     client.on('message', (topic, message) => {
@@ -67,7 +67,7 @@ export function ModbusSim() {
            setTraffic(prev => [{ 
              id: Math.random().toString(36).substr(2, 5), 
              msg: `INCOMING REQ from ${data.srcIp} [FC:${data.fc}]`, 
-             type: 'req' 
+             type: 'req' as const
            }, ...prev].slice(0, 10));
 
            // Simulate Response
@@ -94,7 +94,7 @@ export function ModbusSim() {
           setTraffic(prev => [{ 
             id: Math.random().toString(36).substr(2, 5), 
             msg: `REPLY from ${data.srcIp}: [${data.data.join(',')}]`, 
-            type: 'res' 
+            type: 'res' as const
           }, ...prev].slice(0, 10));
         }
 
@@ -109,7 +109,7 @@ export function ModbusSim() {
     setTraffic(prev => [{ 
       id: Math.random().toString(36).substr(2, 5), 
       msg: `SEND REQ to ${targetIp} [FC:${fc}]`, 
-      type: 'req' 
+      type: 'req' as const
     }, ...prev].slice(0, 10));
 
     clientRef.current.publish(`plts/modbus/ip/${targetIp}/req`, JSON.stringify({
