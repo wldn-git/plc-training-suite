@@ -1,6 +1,7 @@
 import React from 'react';
 import { useUserStore } from '@/store/userStore';
 import { Sun, Moon, Bell, Search, User } from 'lucide-react';
+import { getLevelLabel } from '@/lib/utils/titles';
 
 export const Navbar: React.FC = () => {
   const { settings, toggleTheme } = useUserStore();
@@ -48,7 +49,9 @@ export const Navbar: React.FC = () => {
               <span className="text-xs font-bold text-text-primary leading-none group-hover:text-accent transition-colors">
                 {settings.userName}
               </span>
-              <span className="text-[10px] text-text-dim">Level 1 Beginner</span>
+              <span className="text-[9px] text-text-dim mt-0.5 font-mono uppercase tracking-tighter">
+                {getLevelLabel(settings.maxLevel || 1)}
+              </span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-bg-elevated border border-border flex items-center justify-center text-accent group-hover:shadow-accent transition-all">
               <User size={20} />

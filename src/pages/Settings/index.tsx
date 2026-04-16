@@ -9,6 +9,7 @@ import { db } from '@/lib/db/db';
 import { useUserStore } from '@/store/userStore';
 import { Modal } from '@/components/ui/Modal';
 import { motion } from 'framer-motion';
+import { getProfessionalTitle } from '@/lib/utils/titles';
 
 export default function Settings() {
   const { settings, toggleTheme } = useUserStore();
@@ -88,7 +89,9 @@ export default function Settings() {
                 <div className="absolute inset-0 rounded-full bg-accent/20 animate-ping opacity-20" />
              </div>
              <h3 className="font-mono text-xl font-bold text-text-primary tracking-tight">{settings.userName}</h3>
-             <Badge variant="accent" className="mt-2 text-[10px] uppercase font-bold px-3">Senior Automation Engineer</Badge>
+             <Badge variant="accent" className="mt-2 text-[10px] uppercase font-bold px-3">
+               {getProfessionalTitle(settings.maxLevel || 1)}
+             </Badge>
              
              <div className="h-[1px] bg-border my-8" />
              

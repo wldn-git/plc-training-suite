@@ -18,6 +18,7 @@ export interface UserSettings {
   theme: 'dark' | 'light';
   language: 'id' | 'en';
   userName: string;
+  maxLevel: number; // Highest achieved level
   soundEnabled: boolean;
   animationsEnabled: boolean;
 }

@@ -42,7 +42,7 @@ export function UserRegistration({ onComplete }: UserRegistrationProps) {
       setTimeout(() => {
         // Update global store
         const { updateSettings } = useUserStore.getState();
-        updateSettings({ userName: formData.name });
+        updateSettings({ userName: formData.name, maxLevel: 1 });
         
         localStorage.setItem('plc_user_profile', JSON.stringify(formData));
         onComplete(formData);
@@ -54,7 +54,7 @@ export function UserRegistration({ onComplete }: UserRegistrationProps) {
       
       setTimeout(() => {
         const { updateSettings } = useUserStore.getState();
-        updateSettings({ userName: formData.name });
+        updateSettings({ userName: formData.name, maxLevel: 1 });
         localStorage.setItem('plc_user_profile', JSON.stringify(formData));
         onComplete(formData);
       }, 2000);

@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   theme: 'dark',
   language: 'id',
   userName: 'Teknisi',
+  maxLevel: 1,
   soundEnabled: false,
   animationsEnabled: true,
 };

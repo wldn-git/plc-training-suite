@@ -89,7 +89,13 @@ export function useAssessment() {
     await db.quizHistory.add(newSession);
     
     // Sync to Google Sheets
-    const { settings } = useUserStore.getState();
+    const { settings, updateSettings } = useUserStore.getState();
+    
+    // Update max level if certified
+    if (newSession.certified && newSession.level >= settings.maxLevel) {
+      updateSettings({ maxLevel: Math.min(5, newSession.level + 1) });
+    }
+
     sheetService.send({
       type: 'quiz_result',
       userName: settings.userName || 'Unknown User',
