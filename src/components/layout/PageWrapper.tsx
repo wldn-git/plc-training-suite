@@ -9,6 +9,7 @@ import {
   Database,
   ClipboardCheck,
   Settings,
+  Zap,
 } from 'lucide-react';
 
 // ============================================================
@@ -18,10 +19,10 @@ import {
 const navItems = [
   { path: '/',           label: 'Dashboard',  icon: LayoutDashboard },
   { path: '/learning',   label: 'Materi',     icon: BookOpen },
-  { path: '/simulator',  label: 'Simulator',  icon: Cpu },
-  { path: '/database',   label: 'Katalog',    icon: Database },
-  { path: '/assessment', label: 'Kuis',       icon: ClipboardCheck },
-  { path: '/settings',   label: 'Pengaturan', icon: Settings },
+  { path: '/plant-sandbox',  label: 'Simulasi I/O', icon: Zap },
+  { path: '/database',       label: 'Katalog',    icon: Database },
+  { path: '/assessment',     label: 'Kuis',       icon: ClipboardCheck },
+  { path: '/settings',       label: 'Pengaturan', icon: Settings },
 ];
 
 // ============================================================

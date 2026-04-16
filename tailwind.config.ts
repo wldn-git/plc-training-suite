@@ -9,28 +9,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // PLC Training Suite Design Tokens
         bg: {
-          DEFAULT: '#0F1117',
-          surface: '#1A1D2E',
-          elevated: '#222638',
+          DEFAULT: 'var(--bg-default)',
+          surface: 'var(--bg-surface)',
+          elevated: 'var(--bg-elevated)',
         },
         accent: {
-          DEFAULT: '#00D4FF',
-          dim: '#00A8CC',
-          glow: 'rgba(0, 212, 255, 0.15)',
+          DEFAULT: 'var(--accent-default)',
+          dim: 'var(--accent-dim)',
+          glow: 'var(--accent-glow)',
         },
         success: '#22C55E',
         warning: '#F59E0B',
         danger: '#EF4444',
         text: {
-          primary: '#E2E8F0',
-          muted: '#94A3B8',
-          dim: '#64748B',
+          primary: 'var(--text-primary)',
+          muted: 'var(--text-muted)',
+          dim: 'var(--text-dim)',
         },
         border: {
-          DEFAULT: 'rgba(255,255,255,0.08)',
-          accent: 'rgba(0, 212, 255, 0.3)',
+          DEFAULT: 'var(--border-default)',
+          accent: 'var(--border-accent)',
         },
       },
       fontFamily: {
@@ -49,6 +48,7 @@ const config: Config = {
       },
       animation: {
         'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin 3s linear infinite',
         'fade-in': 'fadeIn 0.3s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
       },

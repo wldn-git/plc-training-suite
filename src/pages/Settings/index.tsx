@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Dexie from 'dexie';
 import { Card, Button, Badge } from '@/components/ui';
 import { 
   Trash2, HardDrive, ShieldAlert, Monitor, Moon, Sun, 
@@ -25,10 +26,38 @@ export default function Settings() {
     }
   }, []);
 
+  const [isResetting, setIsResetting] = useState(false);
+
   const resetAllData = async () => {
-    await db.delete();
-    localStorage.clear();
-    window.location.reload();
+    setIsResetting(true);
+    try {
+      // 1. Close current DB connection
+      db.close();
+      
+      // 2. Delete the actual database
+      await Dexie.delete('PLCTrainingDB');
+      
+      // 3. Clear all local storage
+      localStorage.clear();
+
+      // 4. Optional: Unregister Service Workers to clear PWA cache
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+      }
+
+      // Final Reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (err) {
+      console.error('Hard reset failed:', err);
+      // Fallback
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   const usageMB = (storageUsage.usage / (1024 * 1024)).toFixed(2);
@@ -195,8 +224,10 @@ export default function Settings() {
         size="sm"
         footer={
           <>
-            <Button variant="ghost" onClick={() => setIsResetModalOpen(false)}>Cancel</Button>
-            <Button variant="danger" onClick={resetAllData}>YES, WIPE EVERYTHING</Button>
+            <Button variant="ghost" disabled={isResetting} onClick={() => setIsResetModalOpen(false)}>Cancel</Button>
+            <Button variant="danger" disabled={isResetting} onClick={resetAllData}>
+              {isResetting ? 'Wiping Data...' : 'YES, WIPE EVERYTHING'}
+            </Button>
           </>
         }
       >

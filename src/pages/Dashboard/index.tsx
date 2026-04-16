@@ -2,16 +2,17 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db/db';
 import { useProgress } from '@/hooks/useProgress';
 import { Card, Badge, Button } from '@/components/ui';
-import { BookOpen, Award, Cpu, Zap, ArrowRight, History, Star } from 'lucide-react';
+import { BookOpen, Award, Zap, ArrowRight, History, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ALL_MODULES } from '@/constants/learningModules';
+import { useIOBrokerStore } from '@/store/ioBrokerStore';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { calculateOverallProgress, calculateStreak, getLastOpenedModule } = useProgress();
 
   const quizCount = useLiveQuery(() => db.quizHistory.count()) || 0;
-  const projectCount = useLiveQuery(() => db.projects.count()) || 0;
+  const { settings } = useIOBrokerStore();
   
   // Calculate Average Quiz Score
   const avgQuizScore = useLiveQuery(async () => {
@@ -80,18 +81,24 @@ export default function Dashboard() {
           <Award size={100} className="absolute -bottom-6 -right-6 opacity-[0.03] rotate-12 group-hover:opacity-[0.06] transition-opacity" />
         </Card>
 
-        <Card className="p-6 border-warning/20 bg-warning/5 relative overflow-hidden group">
+        <Card 
+          hoverable 
+          className={`p-6 border-accent/20 cursor-pointer overflow-hidden group transition-all ${settings.status === 'connected' ? 'bg-success/5 border-success/30' : 'bg-accent/5'}`}
+          onClick={() => navigate('/plant-sandbox')}
+        >
           <div className="flex items-center gap-4 mb-4 relative z-10">
-            <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center text-warning">
-              <Cpu size={20} />
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${settings.status === 'connected' ? 'bg-success/20 text-success' : 'bg-accent/20 text-accent'}`}>
+              <Zap size={20} />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-text-dim">Logic Projects</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-text-dim">Simulasi Hardware</span>
           </div>
           <div className="flex items-end justify-between relative z-10">
-            <h2 className="text-5xl font-mono font-black text-text-primary tracking-tighter">{projectCount}</h2>
-            <p className="text-[10px] font-bold text-warning mb-1 uppercase tracking-widest">Saved Rungs</p>
+            <h2 className="text-3xl font-mono font-black text-text-primary tracking-tighter">
+              {settings.status === 'connected' ? 'LIVE' : 'STANDBY'}
+            </h2>
+            <p className="text-[10px] font-bold text-text-dim mb-1 uppercase tracking-widest">Digital Twin IO</p>
           </div>
-          <Cpu size={100} className="absolute -bottom-6 -right-6 opacity-[0.03] rotate-12 group-hover:opacity-[0.06] transition-opacity" />
+          <Zap size={100} className="absolute -bottom-6 -right-6 opacity-[0.03] rotate-12 group-hover:opacity-[0.06] transition-opacity" />
         </Card>
       </div>
 

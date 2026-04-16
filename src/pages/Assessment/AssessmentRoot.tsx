@@ -8,6 +8,7 @@ import {
 import { jsPDF } from 'jspdf';
 import { LEARNING_LEVELS } from '@/constants/learningModules';
 import { motion } from 'framer-motion';
+import { useUserStore } from '@/store/userStore';
 
 // ============================================================
 // Assessment Module — Task 20
@@ -19,6 +20,7 @@ export default function AssessmentRoot() {
     totalQuestions, timeRemaining, startQuiz, submitAnswer, 
     lastSession, reset 
   } = useAssessment();
+  const { settings } = useUserStore();
 
   // Helper Format Waktu
   const formatTime = (seconds: number) => {
@@ -188,11 +190,22 @@ export default function AssessmentRoot() {
       doc.text('This document officially certifies that the candidate has demonstrated', 148.5, 78, { align: 'center' });
       doc.text('exceptional proficiency and technical competence in the discipline of:', 148.5, 84, { align: 'center' });
       
+      // Candidate Name
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.setFont('helvetica', 'bold');
+      doc.text(settings.userName.toUpperCase(), 148.5, 96, { align: 'center' });
+      
+      // Divider line under name
+      doc.setDrawColor(0, 212, 255);
+      doc.setLineWidth(0.5);
+      doc.line(100, 99, 197, 99);
+      
       // Program Level
       doc.setTextColor(0, 212, 255);
-      doc.setFontSize(26);
+      doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
-      doc.text(`PLC ENGINEERING - LEVEL ${level}`, 148.5, 105, { align: 'center' });
+      doc.text(`INDUSTRIAL AUTOMATION: PLC LEVEL ${level}`, 148.5, 112, { align: 'center' });
       
       // Score Block
       doc.setFillColor(0, 212, 255);
