@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { QUIZ_BANK } from '@/constants/quizBank';
 import { db } from '@/lib/db/db';
 import type { QuizLevel, AnswerRecord, QuizQuestion, QuizSession } from '@/types/assessment.types';
+import { sheetService } from '@/services/sheetService';
+import { useUserStore } from '@/store/userStore';
 
 // ─── Types Implementation ──────────────────────────────────
 // Note: We use the project's assessment.types.ts as truth.
@@ -86,6 +88,16 @@ export function useAssessment() {
     // Save to Dexie
     await db.quizHistory.add(newSession);
     
+    // Sync to Google Sheets
+    const { settings } = useUserStore.getState();
+    sheetService.send({
+      type: 'quiz_result',
+      userName: settings.userName || 'Unknown User',
+      level: newSession.level,
+      score: newSession.score,
+      certified: newSession.certified
+    });
+
     setSession(newSession);
     setPhase('result');
   }, [selectedLevel, stopTimer, timeLeft]);

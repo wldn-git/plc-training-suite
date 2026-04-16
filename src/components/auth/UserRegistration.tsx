@@ -13,8 +13,7 @@ import { Settings, Loader2 } from 'lucide-react';
 
 import { Toaster, toast } from 'sonner';
 import { useUserStore } from '@/store/userStore';
-
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVUSR1zaSNI8XdmAZsS-2oYxuTQqMH2Xowr8A9aZfqUPe4AlICdSnkJVmCIyItozMMuA/exec';
+import { sheetService } from '@/services/sheetService';
 
 interface UserRegistrationProps {
   onComplete: (user: { name: string; email: string; whatsapp: string }) => void;
@@ -30,11 +29,12 @@ export function UserRegistration({ onComplete }: UserRegistrationProps) {
     const toastId = toast.loading('Sinkronisasi data ke cloud...');
     
     try {
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ ...formData, project: 'PLC_TRAINING', timestamp: new Date().toISOString() }),
+      await sheetService.send({
+        type: 'registration',
+        name: formData.name,
+        email: formData.email,
+        role: 'Students', // Default role
+        company: formData.whatsapp // We use whatsapp as company for now or just role info
       });
       
       toast.success('Pendaftaran berhasil! Selamat datang di sistem.', { id: toastId });
