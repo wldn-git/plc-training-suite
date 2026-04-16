@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Trophy, RotateCcw, CheckCircle, XCircle,
+  RotateCcw, CheckCircle, XCircle,
   FileText, ChevronDown, ChevronUp, Award, Clock,
   Target, BookOpen, Download
 } from 'lucide-react';

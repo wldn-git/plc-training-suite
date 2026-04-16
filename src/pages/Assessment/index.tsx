@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAssessment } from '@/hooks/useAssessment';
 import { QuizSelector } from './QuizSelector';
 import { QuizSession } from './QuizSession';
