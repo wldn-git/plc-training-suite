@@ -16,28 +16,30 @@ export function useMQTT() {
     try {
       updateSettings({ status: 'connecting' });
       
-      const client = mqtt.connect(settings.url, {
+      const options = {
         clientId: `plts_web_${Math.random().toString(16).slice(2, 8)}`,
         clean: true,
-        connectTimeout: 4000,
-        reconnectPeriod: 1000,
-      });
+        connectTimeout: 8000,
+        reconnectPeriod: 2000,
+        keepalive: 60,
+      };
+
+      const client = mqtt.connect(settings.url, options);
 
       client.on('connect', () => {
         updateSettings({ status: 'connected' });
-        // Subscribe to PLC Outputs topic
-        client.subscribe(`${settings.baseTopic}/outputs/#`);
+        client.subscribe(`${settings.baseTopic}/outputs/#`, (err) => {
+           if (err) console.error('Subscription error:', err);
+        });
         console.log('MQTT Connected to', settings.url);
       });
 
       client.on('message', (topic, message) => {
         const payload = message.toString();
-        // Topic pattern: plts/lab-01/outputs/Q0.0
         const parts = topic.split('/');
         const address = parts[parts.length - 1];
         
         try {
-          // Parse boolean or numbers
           const value = payload === 'true' ? true : payload === 'false' ? false : !isNaN(Number(payload)) ? Number(payload) : payload;
           setInputValue(address, value as any);
         } catch (e) {
@@ -46,12 +48,17 @@ export function useMQTT() {
       });
 
       client.on('error', (err) => {
-        console.error('MQTT Connection Error:', err);
+        console.error('MQTT Client Error:', err);
         updateSettings({ status: 'error' });
-        client.end();
+      });
+
+      client.on('reconnect', () => {
+        console.log('MQTT Reconnecting...');
+        updateSettings({ status: 'connecting' });
       });
 
       client.on('close', () => {
+        console.log('MQTT Connection Closed');
         updateSettings({ status: 'disconnected' });
       });
 

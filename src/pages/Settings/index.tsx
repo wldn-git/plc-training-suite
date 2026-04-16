@@ -31,16 +31,19 @@ export default function Settings() {
   const resetAllData = async () => {
     setIsResetting(true);
     try {
-      // 1. Close current DB connection
-      db.close();
-      
-      // 2. Delete the actual database
-      await Dexie.delete('PLCTrainingDB');
-      
-      // 3. Clear all local storage
+      // 1. Clear all local storage first to stop state updates
       localStorage.clear();
+      sessionStorage.clear();
+      
+      // 2. Clear IndexedDB
+      try {
+        db.close();
+        await Dexie.delete('PLCTrainingDB');
+      } catch (e) {
+        console.warn('DB delete direct failed, continuing...', e);
+      }
 
-      // 4. Optional: Unregister Service Workers to clear PWA cache
+      // 3. Unregister SW
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         for (const registration of registrations) {
@@ -48,15 +51,12 @@ export default function Settings() {
         }
       }
 
-      // Final Reload
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      // 4. Nuclear Reload: Redirect to root and hard refresh
+      window.location.href = '/?reset=true';
     } catch (err) {
-      console.error('Hard reset failed:', err);
-      // Fallback
+      console.error('Hard reset failure:', err);
       localStorage.clear();
-      window.location.reload();
+      window.location.href = '/';
     }
   };
 
