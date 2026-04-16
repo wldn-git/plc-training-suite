@@ -3,7 +3,7 @@
  * Menghubungkan aplikasi ke Google Spreadsheet via Apps Script
  */
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVUSR1zaSNI8XdmAZsS-2oYxuTQqMH2Xowr8A9aZfqUPe4AlICdSnkJVmCIyItozMMuA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3eOAnSUGMBl8uws6VyT5SgW2NXNVXEuS_5JjCqtryWHMJie7imulRs3lmUNpzoHMi/exec';
 
 export interface RegistrationData {
   type: 'registration';
