@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { UserRegistration } from '@/components/auth/UserRegistration';
+import { Analytics } from '@vercel/analytics/react';
 import Dashboard from '@/pages/Dashboard/index';
 import LearningIndex from '@/pages/Learning/LearningIndex';
 import ModuleDetail from '@/pages/Learning/ModuleDetail';
 import PLCList from '@/pages/Database/PLCList';
 import AssessmentIndex from './pages/Assessment/index';
 import SettingsPage from '@/pages/Settings/index';
-import PlantSandbox from '@/pages/PlantSandbox/index';
+import ProtocolCenter from '@/pages/Protocols/index';
 import { useUserStore } from '@/store/userStore';
 
 // ============================================================
@@ -63,6 +64,9 @@ function App() {
           <Route path="learning" element={<LearningIndex />} />
           <Route path="learning/:moduleId" element={<ModuleDetail />} />
 
+          {/* Protocols Center */}
+          <Route path="protocols" element={<ProtocolCenter />} />
+
           {/* Simulator & Sandbox */}
           <Route path="plant-sandbox" element={<PlantSandbox />} />
 
@@ -79,6 +83,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }

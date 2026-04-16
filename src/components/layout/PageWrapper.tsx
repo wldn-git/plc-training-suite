@@ -9,7 +9,7 @@ import {
   Database,
   ClipboardCheck,
   Settings,
-  Zap,
+  Share2,
 } from 'lucide-react';
 
 // ============================================================
@@ -19,7 +19,7 @@ import {
 const navItems = [
   { path: '/',           label: 'Dashboard',  icon: LayoutDashboard },
   { path: '/learning',   label: 'Materi',     icon: BookOpen },
-  { path: '/plant-sandbox',  label: 'Simulasi I/O', icon: Zap },
+  { path: '/protocols',  label: 'Protokol Comm', icon: Share2 },
   { path: '/database',       label: 'Katalog',    icon: Database },
   { path: '/assessment',     label: 'Kuis',       icon: ClipboardCheck },
   { path: '/settings',       label: 'Pengaturan', icon: Settings },
