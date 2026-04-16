@@ -67,9 +67,6 @@ function App() {
           {/* Protocols Center */}
           <Route path="protocols" element={<ProtocolCenter />} />
 
-          {/* Simulator & Sandbox */}
-          <Route path="plant-sandbox" element={<PlantSandbox />} />
-
           {/* Database */}
           <Route path="database" element={<PLCList />} />
 

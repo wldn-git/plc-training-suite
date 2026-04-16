@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, Button, Badge } from '@/components/ui';
+import { Badge } from '@/components/ui';
 import { 
-  Share2, Activity, ShieldCheck, Terminal, 
-  Settings, Zap, Database, Server, Link 
+  Share2, Zap, Database
 } from 'lucide-react';
 import { MQTTConsole } from './MQTTConsole';
 import { ModbusSim } from './ModbusSim';

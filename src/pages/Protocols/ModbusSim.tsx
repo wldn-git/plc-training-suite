@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input, Label } from '@/components/ui';
+import { Card, Button, Badge, Input } from '@/components/ui';
 import { 
   Database, Server, Cpu, Activity, 
   ArrowRightLeft, Box 
@@ -15,7 +15,6 @@ interface Register {
 export function ModbusSim() {
   const [role, setRole] = useState<'master' | 'slave'>('slave');
   const [slaveId, setSlaveId] = useState(1);
-  const [targetSlaveId, setTargetSlaveId] = useState(1);
   
   // Virtual Registers for Slave
   const [coils, setCoils] = useState<Register[]>([
