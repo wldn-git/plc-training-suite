@@ -5,7 +5,7 @@ import {
   Globe, Zap, Terminal,
   Settings, Database, Play, Square,
   Wifi, WifiOff, RefreshCw, Layers,
-  ChevronRight, Binary, Hash, Layout, Eye
+  ChevronRight, Binary, Hash, Layout, Eye, Network
 } from 'lucide-react';
 import mqtt, { MqttClient } from 'mqtt';
 
@@ -335,10 +335,10 @@ export function ModbusSim() {
           </div>
           
           <div className="flex bg-bg-elevated p-1.5 rounded-2xl shadow-inner border border-border ml-2">
-            <Button size="sm" variant={mode === 'virtual' ? 'accent' : 'ghost'} onClick={() => setMode('virtual')} className="rounded-xl px-4 h-10 font-black text-[10px]">
+            <Button size="sm" variant={mode === 'virtual' ? 'primary' : 'ghost'} onClick={() => setMode('virtual')} className="rounded-xl px-4 h-10 font-black text-[10px]">
               <Globe size={14} className="mr-2" /> VIRTUAL
             </Button>
-            <Button size="sm" variant={mode === 'hardware' ? 'accent' : 'ghost'} onClick={() => setMode('hardware')} className="rounded-xl px-4 h-10 font-black text-[10px]">
+            <Button size="sm" variant={mode === 'hardware' ? 'primary' : 'ghost'} onClick={() => setMode('hardware')} className="rounded-xl px-4 h-10 font-black text-[10px]">
               <Zap size={14} className="mr-2" /> HARDWARE
             </Button>
           </div>
