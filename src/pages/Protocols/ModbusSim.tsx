@@ -39,13 +39,13 @@ interface TrafficLog {
 export function ModbusSim() {
   // Core State
   const [mode, setMode] = useState<'virtual' | 'hardware'>('virtual');
-  const [role, setRole] = useState<'master' | 'slave'>('master');
+  const [role] = useState<'master' | 'slave'>('master');
   const [isBridgeOnline, setIsBridgeOnline] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
   // Connection Settings
   const [transport, setTransport] = useState<'tcp' | 'rtu'>('tcp');
-  const [localIp, setLocalIp] = useState(`192.168.1.${Math.floor(Math.random() * 254) + 1}`);
+  const [localIp] = useState(`192.168.1.${Math.floor(Math.random() * 254) + 1}`);
   const [targetIp, setTargetIp] = useState('192.168.1.10');
   const [port, setPort] = useState(502);
   const [slaveId, setSlaveId] = useState(1);
@@ -248,7 +248,7 @@ export function ModbusSim() {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Badge variant={mode === 'hardware' ? 'primary' : 'outline'} className="uppercase font-black text-[9px] tracking-widest px-3 py-1">
+              <Badge variant={mode === 'hardware' ? 'accent' : 'default'} className="uppercase font-black text-[9px] tracking-widest px-3 py-1">
                 {mode === 'hardware' ? 'Industrial Mode' : 'Training Mode'}
               </Badge>
               {mode === 'hardware' && (
@@ -300,7 +300,7 @@ export function ModbusSim() {
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-text-dim flex items-center justify-between">
                   <span>Transport Protocol</span>
-                  <Badge variant="outline" className="text-[8px] px-1 h-4">{transport.toUpperCase()}</Badge>
+                  <Badge variant="default" className="text-[8px] px-1 h-4">{transport.toUpperCase()}</Badge>
                 </label>
                 <div className="grid grid-cols-2 gap-2 bg-bg-elevated p-1 rounded-xl border border-border/50">
                   <button onClick={() => setTransport('tcp')} className={`py-2 text-[10px] font-black rounded-lg transition-all ${transport === 'tcp' ? 'bg-bg-surface text-accent shadow-sm' : 'text-text-dim hover:text-text-primary'}`}>TCP/IP</button>
@@ -378,7 +378,7 @@ export function ModbusSim() {
                     )}
                   </>
                 ) : (
-                  <Badge variant="outline" className="w-full py-4 rounded-xl flex justify-center bg-accent/5 font-bold text-[10px] text-accent border-accent/20 border">
+                  <Badge variant="default" className="w-full py-4 rounded-xl flex justify-center bg-accent/5 font-bold text-[10px] text-accent border-accent/20 border">
                     VIRTUAL NETWORK ACTIVE
                   </Badge>
                 )}
