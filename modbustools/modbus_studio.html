@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modbus Studio - Professional RTU/TCP Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #141937;
+            --bg-tertiary: #1a1f3a;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-success: #00ff88;
+            --accent-warning: #ffd60a;
+            --accent-error: #ff006e;
+            --text-primary: #e4e8f0;
+            --text-secondary: #9ca3af;
+            --text-tertiary: #6b7280;
+            --border-color: #2d3451;
+            --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            position: relative;
+        }
+        
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5)); }
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+        
+        /* Mode Selector */
+        .mode-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            background: var(--bg-secondary);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: 2px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mode-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+        }
+        
+        .mode-btn.active {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+        
+        .mode-btn.active::before {
+            opacity: 0.1;
+        }
+        
+        /* Main Content Grid */
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        /* Sidebar Panel */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-glow);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-title::before {
+            content: '▸';
+            color: var(--accent-secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        
+        input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+        
+        .btn-success {
+            background: var(--accent-success);
+            color: var(--bg-primary);
+        }
+        
+        .btn-danger {
+            background: var(--accent-error);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .status-badge.connected {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent-success);
+            border: 1px solid var(--accent-success);
+        }
+        
+        .status-badge.disconnected {
+            background: rgba(156, 163, 175, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Work Area */
+        .work-area {
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-glow);
+            min-height: 600px;
+        }
+        
+        /* Master Mode - Function Buttons */
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .function-card {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .function-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .function-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
+        }
+        
+        .function-card:hover::after {
+            opacity: 0.05;
+        }
+        
+        .function-card.active {
+            border-color: var(--accent-primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        .function-card.active::after {
+            opacity: 0.1;
+        }
+        
+        .function-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .function-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .function-code {
+            display: inline-block;
+            background: var(--bg-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            margin-top: 0.5rem;
+        }
+        
+        /* Results Table */
+        .results-section {
+            margin-top: 2rem;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .results-table {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .results-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .results-table th {
+            background: var(--bg-primary);
+            padding: 1rem;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .results-table td {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .results-table tr:hover td {
+            background: rgba(0, 212, 255, 0.03);
+        }
+        
+        /* Slave Mode - Data Store */
+        .data-store {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .data-block {
+            background: var(--bg-tertiary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .data-block h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .data-cell {
+            background: var(--bg-primary);
+            padding: 0.75rem 0.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .data-cell:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+        
+        .data-cell-label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .data-cell-value {
+            font-weight: 600;
+            color: var(--accent-success);
+        }
+        
+        .data-cell-value.bit-on {
+            color: var(--accent-success);
+        }
+        
+        .data-cell-value.bit-off {
+            color: var(--text-tertiary);
+        }
+        
+        /* Logs Panel */
+        .logs-panel {
+            background: var(--bg-tertiary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .logs-panel h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+        
+        .log-entry {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid transparent;
+            border-radius: 0.25rem;
+            background: var(--bg-primary);
+        }
+        
+        .log-entry.info {
+            border-left-color: var(--accent-primary);
+        }
+        
+        .log-entry.success {
+            border-left-color: var(--accent-success);
+        }
+        
+        .log-entry.error {
+            border-left-color: var(--accent-error);
+        }
+        
+        .log-entry.warning {
+            border-left-color: var(--accent-warning);
+        }
+        
+        .log-time {
+            color: var(--text-tertiary);
+            margin-right: 0.5rem;
+        }
+        
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+            
+            .data-store {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Modbus Studio</h1>
+            <p class="subtitle">Professional RTU/TCP Master & Slave Tools</p>
+        </header>
+        
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="master">
+                <span>🎛️ Master / Polling</span>
+            </button>
+            <button class="mode-btn" data-mode="slave">
+                <span>🖥️ Slave / Server</span>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar Configuration -->
+            <div class="sidebar">
+                <div class="panel-title">Connection</div>
+                
+                <!-- Transport Type -->
+                <div class="form-group">
+                    <label>Transport Type</label>
+                    <select id="transportType">
+                        <option value="tcp">Modbus TCP</option>
+                        <option value="rtu">Modbus RTU</option>
+                    </select>
+                </div>
+                
+                <!-- TCP Configuration -->
+                <div id="tcpConfig">
+                    <div class="form-group">
+                        <label>IP Address</label>
+                        <input type="text" id="tcpHost" value="127.0.0.1" placeholder="192.168.1.100">
+                    </div>
+                    <div class="form-group">
+                        <label>Port</label>
+                        <input type="number" id="tcpPort" value="502" placeholder="502">
+                    </div>
+                </div>
+                
+                <!-- RTU Configuration -->
+                <div id="rtuConfig" class="hidden">
+                    <div class="form-group">
+                        <label>Serial Port</label>
+                        <input type="text" id="rtuPort" value="/dev/ttyUSB0" placeholder="/dev/ttyUSB0 or COM3">
+                    </div>
+                    <div class="form-group">
+                        <label>Baud Rate</label>
+                        <select id="rtuBaud">
+                            <option value="9600">9600</option>
+                            <option value="19200">19200</option>
+                            <option value="38400">38400</option>
+                            <option value="57600">57600</option>
+                            <option value="115200">115200</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Slave ID (Master Mode) -->
+                <div id="slaveIdConfig">
+                    <div class="form-group">
+                        <label>Slave ID</label>
+                        <input type="number" id="slaveId" value="1" min="1" max="247">
+                    </div>
+                </div>
+                
+                <!-- Server Config (Slave Mode) -->
+                <div id="serverConfig" class="hidden">
+                    <div class="form-group">
+                        <label>Server Slave ID</label>
+                        <input type="number" id="serverSlaveId" value="1" min="1" max="247">
+                    </div>
+                </div>
+                
+                <!-- Status -->
+                <div class="status-badge disconnected" id="statusBadge">
+                    Disconnected
+                </div>
+                
+                <!-- Connect Button -->
+                <button class="btn btn-primary btn-block" id="connectBtn">
+                    <span id="connectBtnText">Connect</span>
+                </button>
+            </div>
+            
+            <!-- Work Area -->
+            <div class="work-area">
+                <!-- Master Mode -->
+                <div id="masterMode">
+                    <h2 class="panel-title">Modbus Functions</h2>
+                    
+                    <!-- Function Selection -->
+                    <div class="function-grid">
+                        <div class="function-card" data-function="read_coils">
+                            <h3>Read Coils</h3>
+                            <p>Read digital outputs (0x)</p>
+                            <span class="function-code">FC 01</span>
+                        </div>
+                        <div class="function-card" data-function="read_discrete">
+                            <h3>Read Discrete Inputs</h3>
+                            <p>Read digital inputs (1x)</p>
+                            <span class="function-code">FC 02</span>
+                        </div>
+                        <div class="function-card" data-function="read_holding">
+                            <h3>Read Holding Registers</h3>
+                            <p>Read analog outputs (4x)</p>
+                            <span class="function-code">FC 03</span>
+                        </div>
+                        <div class="function-card" data-function="read_input">
+                            <h3>Read Input Registers</h3>
+                            <p>Read analog inputs (3x)</p>
+                            <span class="function-code">FC 04</span>
+                        </div>
+                        <div class="function-card" data-function="write_coil">
+                            <h3>Write Single Coil</h3>
+                            <p>Write one digital output</p>
+                            <span class="function-code">FC 05</span>
+                        </div>
+                        <div class="function-card" data-function="write_register">
+                            <h3>Write Single Register</h3>
+                            <p>Write one analog output</p>
+                            <span class="function-code">FC 06</span>
+                        </div>
+                        <div class="function-card" data-function="write_coils">
+                            <h3>Write Multiple Coils</h3>
+                            <p>Write multiple digital outputs</p>
+                            <span class="function-code">FC 15</span>
+                        </div>
+                        <div class="function-card" data-function="write_registers">
+                            <h3>Write Multiple Registers</h3>
+                            <p>Write multiple analog outputs</p>
+                            <span class="function-code">FC 16</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Operation Panel -->
+                    <div id="operationPanel" class="hidden">
+                        <h2 class="panel-title" id="operationTitle">Operation</h2>
+                        
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Start Address</label>
+                                <input type="number" id="opAddress" value="0" min="0">
+                            </div>
+                            <div class="form-group" id="countGroup">
+                                <label>Count / Quantity</label>
+                                <input type="number" id="opCount" value="10" min="1">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group hidden" id="valueGroup">
+                            <label id="valueLabel">Value</label>
+                            <input type="text" id="opValue" placeholder="e.g., 12345 or 1,0,1,0,1">
+                        </div>
+                        
+                        <button class="btn btn-success btn-block" id="executeBtn">
+                            Execute
+                        </button>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div class="results-section hidden" id="resultsSection">
+                        <div class="results-header">
+                            <h2 class="panel-title">Results</h2>
+                            <button class="btn" id="clearResults" style="padding: 0.5rem 1rem; background: var(--bg-tertiary);">
+                                Clear
+                            </button>
+                        </div>
+                        <div class="results-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Address</th>
+                                        <th>Value</th>
+                                        <th>Hex</th>
+                                        <th>Binary</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slave Mode -->
+                <div id="slaveMode" class="hidden">
+                    <h2 class="panel-title">Data Store Monitor</h2>
+                    
+                    <div class="data-store">
+                        <!-- Coils -->
+                        <div class="data-block">
+                            <h3>Coils (0x) - Read/Write</h3>
+                            <div class="data-grid" id="coilsGrid"></div>
+                        </div>
+                        
+                        <!-- Discrete Inputs -->
+                        <div class="data-block">
+                            <h3>Discrete Inputs (1x) - Read Only</h3>
+                            <div class="data-grid" id="discreteGrid"></div>
+                        </div>
+                        
+                        <!-- Holding Registers -->
+                        <div class="data-block">
+                            <h3>Holding Registers (4x) - Read/Write</h3>
+                            <div class="data-grid" id="holdingGrid"></div>
+                        </div>
+                        
+                        <!-- Input Registers -->
+                        <div class="data-block">
+                            <h3>Input Registers (3x) - Read Only</h3>
+                            <div class="data-grid" id="inputRegGrid"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Logs -->
+                <div class="logs-panel">
+                    <h3>Activity Log</h3>
+                    <div id="logsContent">
+                        <div class="log-entry info">
+                            <span class="log-time">[00:00:00]</span>
+                            <span>Modbus Studio ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Application State
+        const state = {
+            mode: 'master',
+            transport: 'tcp',
+            connected: false,
+            selectedFunction: null,
+            serverProcess: null,
+            pollingInterval: null
+        };
+        
+        // API Base URL
+        const API_BASE = 'http://127.0.0.1:5000/api';
+        
+        // DOM Elements
+        const elements = {
+            modeBtns: document.querySelectorAll('.mode-btn'),
+            transportType: document.getElementById('transportType'),
+            tcpConfig: document.getElementById('tcpConfig'),
+            rtuConfig: document.getElementById('rtuConfig'),
+            slaveIdConfig: document.getElementById('slaveIdConfig'),
+            serverConfig: document.getElementById('serverConfig'),
+            statusBadge: document.getElementById('statusBadge'),
+            connectBtn: document.getElementById('connectBtn'),
+            connectBtnText: document.getElementById('connectBtnText'),
+            masterMode: document.getElementById('masterMode'),
+            slaveMode: document.getElementById('slaveMode'),
+            functionCards: document.querySelectorAll('.function-card'),
+            operationPanel: document.getElementById('operationPanel'),
+            executeBtn: document.getElementById('executeBtn'),
+            resultsSection: document.getElementById('resultsSection'),
+            resultsTableBody: document.getElementById('resultsTableBody'),
+            logsContent: document.getElementById('logsContent')
+        };
+        
+        // Mode Switching
+        elements.modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                state.mode = mode;
+                
+                elements.modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                if (mode === 'master') {
+                    elements.masterMode.classList.remove('hidden');
+                    elements.slaveMode.classList.add('hidden');
+                    elements.slaveIdConfig.classList.remove('hidden');
+                    elements.serverConfig.classList.add('hidden');
+                } else {
+                    elements.masterMode.classList.add('hidden');
+                    elements.slaveMode.classList.remove('hidden');
+                    elements.slaveIdConfig.classList.add('hidden');
+                    elements.serverConfig.classList.remove('hidden');
+                }
+                
+                log('info', `Switched to ${mode.toUpperCase()} mode`);
+            });
+        });
+        
+        // Transport Type Switching
+        elements.transportType.addEventListener('change', (e) => {
+            state.transport = e.target.value;
+            
+            if (e.target.value === 'tcp') {
+                elements.tcpConfig.classList.remove('hidden');
+                elements.rtuConfig.classList.add('hidden');
+            } else {
+                elements.tcpConfig.classList.add('hidden');
+                elements.rtuConfig.classList.remove('hidden');
+            }
+            
+            log('info', `Transport type changed to ${e.target.value.toUpperCase()}`);
+        });
+        
+        // Function Card Selection
+        elements.functionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const func = card.dataset.function;
+                state.selectedFunction = func;
+                
+                elements.functionCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                
+                elements.operationPanel.classList.remove('hidden');
+                document.getElementById('operationTitle').textContent = card.querySelector('h3').textContent;
+                
+                // Configure operation panel based on function
+                const countGroup = document.getElementById('countGroup');
+                const valueGroup = document.getElementById('valueGroup');
+                const valueLabel = document.getElementById('valueLabel');
+                
+                if (func.startsWith('read')) {
+                    countGroup.classList.remove('hidden');
+                    valueGroup.classList.add('hidden');
+                } else if (func === 'write_coil' || func === 'write_register') {
+                    countGroup.classList.add('hidden');
+                    valueGroup.classList.remove('hidden');
+                    valueLabel.textContent = func === 'write_coil' ? 'Value (0 or 1)' : 'Value (0-65535)';
+                } else {
+                    countGroup.classList.remove('hidden');
+                    valueGroup.classList.remove('hidden');
+                    valueLabel.textContent = 'Values (comma-separated)';
+                }
+                
+                log('info', `Selected function: ${card.querySelector('h3').textContent}`);
+            });
+        });
+        
+        // Connect Button
+        elements.connectBtn.addEventListener('click', async () => {
+            if (state.connected) {
+                disconnect();
+            } else {
+                await connect();
+            }
+        });
+        
+        // Execute Button
+        elements.executeBtn.addEventListener('click', async () => {
+            if (!state.connected) {
+                log('error', 'Not connected! Please connect first.');
+                return;
+            }
+            
+            await executeFunction();
+        });
+        
+        // Clear Results
+        document.getElementById('clearResults').addEventListener('click', () => {
+            elements.resultsTableBody.innerHTML = '';
+            elements.resultsSection.classList.add('hidden');
+            log('info', 'Results cleared');
+        });
+        
+        // Connect Function
+        async function connect() {
+            log('info', `Connecting to Modbus ${state.transport.toUpperCase()}...`);
+            
+            elements.connectBtn.disabled = true;
+            elements.connectBtnText.innerHTML = '<span class="loading"></span>';
+            
+            try {
+                const config = {};
+                
+                if (state.transport === 'tcp') {
+                    config.host = document.getElementById('tcpHost').value;
+                    config.port = document.getElementById('tcpPort').value;
+                } else {
+                    config.port = document.getElementById('rtuPort').value;
+                    config.baudrate = document.getElementById('rtuBaud').value;
+                }
+                
+                if (state.mode === 'master') {
+                    config.slave_id = document.getElementById('slaveId').value;
+                } else {
+                    config.slave_id = document.getElementById('serverSlaveId').value;
+                }
+                
+                const response = await fetch(`${API_BASE}/connect`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: state.mode,
+                        transport: state.transport,
+                        config: config
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    state.connected = true;
+                    elements.statusBadge.classList.remove('disconnected');
+                    elements.statusBadge.classList.add('connected');
+                    elements.statusBadge.textContent = 'Connected';
+                    elements.connectBtn.classList.remove('btn-primary');
+                    elements.connectBtn.classList.add('btn-danger');
+                    elements.connectBtnText.textContent = 'Disconnect';
+                    
+                    if (state.mode === 'slave') {
+                        startSlaveMonitoring();
+                    }
+                    
+                    log('success', result.message || 'Connected successfully');
+                } else {
+                    throw new Error(result.error || 'Connection failed');
+                }
+            } catch (error) {
+                log('error', `Connection failed: ${error.message}`);
+                elements.connectBtn.classList.add('btn-primary');
+                elements.connectBtnText.textContent = 'Connect';
+            }
+            
+            elements.connectBtn.disabled = false;
+        }
+        
+        // Disconnect Function
+        async function disconnect() {
+            log('info', 'Disconnecting...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/disconnect`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    state.connected = false;
+                    elements.statusBadge.classList.remove('connected');
+                    elements.statusBadge.classList.add('disconnected');
+                    elements.statusBadge.textContent = 'Disconnected';
+                    elements.connectBtn.classList.remove('btn-danger');
+                    elements.connectBtn.classList.add('btn-primary');
+                    elements.connectBtnText.textContent = 'Connect';
+                    
+                    if (state.pollingInterval) {
+                        clearInterval(state.pollingInterval);
+                        state.pollingInterval = null;
+                    }
+                    
+                    log('info', 'Disconnected successfully');
+                } else {
+                    throw new Error(result.error || 'Disconnect failed');
+                }
+            } catch (error) {
+                log('error', `Disconnect failed: ${error.message}`);
+            }
+        }
+        
+        // Execute Function
+        async function executeFunction() {
+            const address = parseInt(document.getElementById('opAddress').value);
+            const count = parseInt(document.getElementById('opCount').value) || 1;
+            const valueInput = document.getElementById('opValue').value;
+            
+            log('info', `Executing ${state.selectedFunction} at address ${address}`);
+            
+            elements.executeBtn.disabled = true;
+            elements.executeBtn.innerHTML = '<span class="loading"></span> Executing...';
+            
+            try {
+                let values = [];
+                
+                // Parse values based on function type
+                if (state.selectedFunction.includes('write')) {
+                    if (valueInput.includes(',')) {
+                        values = valueInput.split(',').map(v => v.trim());
+                    } else {
+                        values = [valueInput];
+                    }
+                }
+                
+                const response = await fetch(`${API_BASE}/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        function: state.selectedFunction,
+                        slave_id: parseInt(document.getElementById('slaveId').value),
+                        address: address,
+                        count: count,
+                        values: values
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayResults(result.values, address);
+                    log('success', `Operation completed: ${result.values.length} values`);
+                } else {
+                    throw new Error(result.error || 'Operation failed');
+                }
+            } catch (error) {
+                log('error', `Operation failed: ${error.message}`);
+            }
+            
+            elements.executeBtn.disabled = false;
+            elements.executeBtn.textContent = 'Execute';
+        }
+        
+        // Display Results
+        function displayResults(results, startAddress) {
+            elements.resultsTableBody.innerHTML = '';
+            elements.resultsSection.classList.remove('hidden');
+            
+            results.forEach((value, index) => {
+                const row = document.createElement('tr');
+                const addr = startAddress + index;
+                
+                row.innerHTML = `
+                    <td>${addr}</td>
+                    <td>${value}</td>
+                    <td>0x${value.toString(16).toUpperCase().padStart(4, '0')}</td>
+                    <td>${value.toString(2).padStart(16, '0')}</td>
+                `;
+                
+                elements.resultsTableBody.appendChild(row);
+            });
+        }
+        
+        // Create Data Cell
+        function createDataCell(index, value, isBit) {
+            const cell = document.createElement('div');
+            cell.className = 'data-cell';
+            
+            const valueClass = isBit ? (value ? 'bit-on' : 'bit-off') : '';
+            
+            cell.innerHTML = `
+                <div class="data-cell-label">${index}</div>
+                <div class="data-cell-value ${valueClass}">${value}</div>
+            `;
+            
+            return cell;
+        }
+        
+        // Start Slave Monitoring
+        async function startSlaveMonitoring() {
+            // Initial load
+            await updateSlaveDataStore();
+            
+            // Poll every 2 seconds
+            state.pollingInterval = setInterval(async () => {
+                await updateSlaveDataStore();
+            }, 2000);
+        }
+        
+        // Update Slave Data Store
+        async function updateSlaveDataStore() {
+            try {
+                const response = await fetch(`${API_BASE}/datastore`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    
+                    // Update grids
+                    updateGrid('coilsGrid', data.coils, true);
+                    updateGrid('discreteGrid', data.discrete_inputs, true);
+                    updateGrid('holdingGrid', data.holding_registers, false);
+                    updateGrid('inputRegGrid', data.input_registers, false);
+                }
+            } catch (error) {
+                console.error('Failed to update datastore:', error);
+            }
+        }
+        
+        // Update Grid
+        function updateGrid(gridId, values, isBit) {
+            const grid = document.getElementById(gridId);
+            
+            // Initialize grid if empty
+            if (grid.children.length === 0) {
+                for (let i = 0; i < values.length; i++) {
+                    const cell = createDataCell(i, values[i], isBit);
+                    grid.appendChild(cell);
+                }
+            } else {
+                // Update existing cells
+                const cells = grid.querySelectorAll('.data-cell');
+                cells.forEach((cell, index) => {
+                    if (index < values.length) {
+                        const valueElem = cell.querySelector('.data-cell-value');
+                        valueElem.textContent = values[index];
+                        
+                        if (isBit) {
+                            valueElem.className = 'data-cell-value ' + (values[index] ? 'bit-on' : 'bit-off');
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Logging Function
+        function log(type, message) {
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0];
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span>${message}</span>
+            `;
+            
+            elements.logsContent.appendChild(entry);
+            elements.logsContent.scrollTop = elements.logsContent.scrollHeight;
+            
+            // Keep only last 50 logs
+            const logs = elements.logsContent.querySelectorAll('.log-entry');
+            if (logs.length > 50) {
+                logs[0].remove();
+            }
+        }
+    </script>
+</body>
+</html>
