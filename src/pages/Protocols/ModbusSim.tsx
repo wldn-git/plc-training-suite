@@ -3,7 +3,7 @@ import { Card, Button, Badge, Input } from '@/components/ui';
 import { 
   Activity, 
   Globe, Zap, Terminal,
-  Settings, Database, Play, Square,
+  Settings, Database, Square,
   Wifi, WifiOff, RefreshCw, Layers,
   ChevronRight, Binary, Hash, Layout, Eye, Network
 } from 'lucide-react';
