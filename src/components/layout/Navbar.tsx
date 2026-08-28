@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useUserStore } from '@/store/userStore';
-import { Sun, Moon, Bell, Search, User } from 'lucide-react';
+import { Sun, Moon, Bell, User } from 'lucide-react';
 import { getLevelLabel } from '@/lib/utils/titles';
 import { UserProfileModal } from './UserProfileModal';
+import { NavbarSearch } from './NavbarSearch';
 
 export const Navbar: React.FC = () => {
   const { settings, toggleTheme } = useUserStore();
@@ -11,15 +12,8 @@ export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 w-full bg-bg/80 backdrop-blur-md border-b border-border">
       <div className="flex h-16 items-center justify-between px-4 lg:px-8">
-        {/* Search Placeholder */}
-        <div className="hidden md:flex relative w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim w-4 h-4" />
-          <input
-            type="text"
-            placeholder="Cari materi atau katalog PLC..."
-            className="w-full bg-bg-elevated/50 border border-border rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-accent transition-all"
-          />
-        </div>
+        {/* Functional Global Search */}
+        <NavbarSearch />
 
         {/* Brand for Mobile */}
         <div className="lg:hidden flex items-center gap-2">
