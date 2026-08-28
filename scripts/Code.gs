@@ -4,12 +4,14 @@
  * Script ini menangani:
  * 1. Request Kode OTP via Email (action: 'request_otp')
  * 2. Verifikasi Kode OTP (action: 'verify_otp')
- * 3. Log Pendaftaran & Login Pengguna di Google Sheets
+ * 3. Log Pendaftaran & Login Pengguna di Google Sheets (Sheet: "Users")
+ * 4. Catatan Histori Hasil Quiz / Assessment (Sheet: "QuizResults")
  */
 
 // Nama Sheet di Google Spreadsheet
 var SHEET_USERS = "Users";
 var SHEET_OTP = "OTP";
+var SHEET_QUIZ = "QuizResults";
 
 /**
  * Memproses permintaan HTTP POST dari Web App
@@ -28,7 +30,9 @@ function doPost(e) {
       result = handleRequestOtp(data);
     } else if (action === "verify_otp") {
       result = handleVerifyOtp(data);
-    } else if (action === "registration" || action === "quiz_result") {
+    } else if (action === "quiz_result") {
+      result = handleQuizResult(data);
+    } else if (action === "registration") {
       result = handleLegacySync(data);
     }
     
@@ -215,7 +219,31 @@ function handleVerifyOtp(data) {
 }
 
 /**
- * 3. Legacy Sync (pendaftaran awal/quiz)
+ * 3. Handle Quiz Result: Catat Hasil Quiz ke Sheet "QuizResults"
+ */
+function handleQuizResult(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var quizSheet = getOrCreateSheet(ss, SHEET_QUIZ, ["Timestamp", "Nama User", "Level Quiz", "Skor", "Sertifikat"]);
+  
+  var timestampStr = formatDate(new Date());
+  var userName = data.userName || data.name || "User";
+  var levelStr = "Level " + (data.level || 1);
+  var scoreStr = (data.score !== undefined ? data.score : 0) + "%";
+  var certifiedStr = data.certified ? "LULUS (Sertifikat)" : "TIDAK LULUS";
+  
+  quizSheet.appendRow([
+    timestampStr,
+    userName,
+    levelStr,
+    scoreStr,
+    certifiedStr
+  ]);
+  
+  return { success: true, message: "Hasil quiz berhasil dicatat di Google Sheets." };
+}
+
+/**
+ * 4. Legacy Sync (pendaftaran standar)
  */
 function handleLegacySync(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -231,7 +259,7 @@ function handleLegacySync(data) {
     timestampStr
   ]);
   
-  return { success: true, message: "Data berhasil disinkronisasi." };
+  return { success: true, message: "Data pendaftaran berhasil disinkronisasi." };
 }
 
 /**
