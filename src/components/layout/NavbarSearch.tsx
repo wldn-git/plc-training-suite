@@ -68,15 +68,16 @@ export const NavbarSearch: React.FC = () => {
     // 2. Match PLC Catalog
     DEFAULT_PLC_BRANDS.forEach((plc) => {
       const name = `${plc.brand} ${plc.series}`.toLowerCase();
-      const notes = plc.notes.toLowerCase();
-      const comms = plc.communication.join(' ').toLowerCase();
+      const notesStr = plc.notes || '';
+      const notes = notesStr.toLowerCase();
+      const comms = plc.communication ? plc.communication.join(' ').toLowerCase() : '';
 
       if (name.includes(q) || notes.includes(q) || comms.includes(q)) {
         results.push({
           id: `plc-${plc.brand}-${plc.series}`,
           category: 'katalog',
           title: `PLC ${plc.brand} ${plc.series}`,
-          subtitle: `${plc.notes} (${plc.digitalInput}DI / ${plc.digitalOutput}DO)`,
+          subtitle: `${notesStr ? notesStr + ' ' : ''}(${plc.digitalInput}DI / ${plc.digitalOutput}DO)`,
           path: '/database',
           icon: <Cpu className="w-4 h-4 text-cyan-400 shrink-0" />,
         });
