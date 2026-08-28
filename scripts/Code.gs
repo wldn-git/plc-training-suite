@@ -48,7 +48,7 @@ function doGet(e) {
   return createJsonResponse({
     status: "active",
     message: "PLC Training Suite Google Apps Script Server is Running",
-    timestamp: new Date().toISOString()
+    timestamp: formatDate(new Date())
   });
 }
 
@@ -83,14 +83,15 @@ function handleRequestOtp(data) {
     }
   }
   
+  var nowFormatted = formatDate(now);
   if (rowIndexToUpdate > 0) {
     otpSheet.getRange(rowIndexToUpdate, 2, 1, 3).setValues([[
       otpCode,
       expiryTime.toISOString(),
-      now.toISOString()
+      nowFormatted
     ]]);
   } else {
-    otpSheet.appendRow([email, otpCode, expiryTime.toISOString(), now.toISOString()]);
+    otpSheet.appendRow([email, otpCode, expiryTime.toISOString(), nowFormatted]);
   }
   
   // Kirim Email OTP ke User
@@ -191,7 +192,7 @@ function handleVerifyOtp(data) {
     }
   }
   
-  var timestampStr = now.toISOString();
+  var timestampStr = formatDate(now);
   if (userRowToUpdate > 0) {
     // Update nama, whatsapp, last login
     if (name) usersSheet.getRange(userRowToUpdate, 2).setValue(name);
@@ -220,16 +221,27 @@ function handleLegacySync(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var usersSheet = getOrCreateSheet(ss, SHEET_USERS, ["Timestamp", "Name", "Email", "WhatsApp", "Role", "LastLogin"]);
   
+  var timestampStr = formatDate(new Date());
   usersSheet.appendRow([
-    new Date().toISOString(),
+    timestampStr,
     data.name || data.userName || "User",
     data.email || "-",
     data.company || "-",
     data.role || "Student",
-    new Date().toISOString()
+    timestampStr
   ]);
   
   return { success: true, message: "Data berhasil disinkronisasi." };
+}
+
+/**
+ * Helper Format Tanggal Lokal (WIB / Timezone Spreadsheet)
+ * Format output: "YYYY-MM-DD HH:mm:ss" (contoh: 2026-08-28 08:35:00)
+ */
+function formatDate(date) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var tz = ss.getSpreadsheetTimeZone() || "Asia/Jakarta";
+  return Utilities.formatDate(date || new Date(), tz, "yyyy-MM-dd HH:mm:ss");
 }
 
 /**
