@@ -35,13 +35,29 @@ function App() {
     if (savedUser) {
       try {
         const parsed = JSON.parse(savedUser);
-        setUser(parsed);
-        // Sync to Zustand if different
-        if (parsed.name && settings.userName !== parsed.name) {
-          updateSettings({ userName: parsed.name });
+        const now = Date.now();
+
+        // Cek apakah masa berlaku sesi (3 hari) sudah expired
+        if (parsed.expiresAt && now > parsed.expiresAt) {
+          console.warn('User session expired (3 days).');
+          localStorage.removeItem('plc_user_profile');
+          setUser(null);
+        } else {
+          // Jika belum ada expiresAt (legacy), otomatis berikan 3 hari dari sekarang
+          if (!parsed.expiresAt) {
+            parsed.expiresAt = now + (3 * 24 * 60 * 60 * 1000);
+            localStorage.setItem('plc_user_profile', JSON.stringify(parsed));
+          }
+
+          setUser(parsed);
+          // Sync to Zustand if different
+          if (parsed.name && settings.userName !== parsed.name) {
+            updateSettings({ userName: parsed.name });
+          }
         }
       } catch (e) {
         console.error('Failed to parse user profile', e);
+        localStorage.removeItem('plc_user_profile');
       }
     }
     setLoading(false);
