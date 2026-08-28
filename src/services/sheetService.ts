@@ -3,7 +3,7 @@
  * Menghubungkan aplikasi ke Google Spreadsheet via Apps Script (OTP & Data Sync)
  */
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3eOAnSUGMBl8uws6VyT5SgW2NXNVXEuS_5JjCqtryWHMJie7imulRs3lmUNpzoHMi/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLQ1KML9eVfgyNEkrx8SwKL4B0OPSYii5RBXbeKRWBnoG6yRNA-GIMu_6wA4IMsCVv/exec';
 
 export interface RegistrationData {
   type: 'registration';
