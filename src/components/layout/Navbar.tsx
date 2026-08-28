@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUserStore } from '@/store/userStore';
 import { Sun, Moon, Bell, Search, User } from 'lucide-react';
 import { getLevelLabel } from '@/lib/utils/titles';
+import { UserProfileModal } from './UserProfileModal';
 
 export const Navbar: React.FC = () => {
   const { settings, toggleTheme } = useUserStore();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-bg/80 backdrop-blur-md border-b border-border">
@@ -44,7 +46,12 @@ export const Navbar: React.FC = () => {
 
           <div className="h-8 w-[1px] bg-border mx-1" />
 
-          <button className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-xl hover:bg-bg-elevated transition-colors group">
+          {/* User Button */}
+          <button 
+            onClick={() => setIsProfileOpen(true)}
+            title="Lihat Profil & Status Expire Login"
+            className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-xl hover:bg-bg-elevated transition-colors group cursor-pointer"
+          >
             <div className="flex flex-col items-end hidden sm:flex">
               <span className="text-xs font-bold text-text-primary leading-none group-hover:text-accent transition-colors">
                 {settings.userName}
@@ -53,12 +60,18 @@ export const Navbar: React.FC = () => {
                 {getLevelLabel(settings.maxLevel || 1)}
               </span>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-bg-elevated border border-border flex items-center justify-center text-accent group-hover:shadow-accent transition-all">
+            <div className="w-10 h-10 rounded-xl bg-bg-elevated border border-border flex items-center justify-center text-accent group-hover:shadow-accent group-hover:border-accent/40 transition-all">
               <User size={20} />
             </div>
           </button>
         </div>
       </div>
+
+      {/* User Profile & Session Expiry Modal */}
+      <UserProfileModal 
+        isOpen={isProfileOpen} 
+        onClose={() => setIsProfileOpen(false)} 
+      />
     </header>
   );
 };
