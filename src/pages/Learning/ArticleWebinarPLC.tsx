@@ -1234,24 +1234,59 @@ export default function ArticleWebinarPLC() {
                     url: 'https://controlsystemguide.com/plc-ladder-logic-tutorial/'
                   },
                   {
+                    title: 'Distrelec KnowHow Hub. (2024). The Role of PLCs in Industrial IoT.',
+                    url: 'https://knowhow.distrelec.com/automation/the-role-of-plcs-in-industrial-iot/'
+                  },
+                  {
+                    title: 'Electrical4U. Programmable Logic Controllers (PLCs): Basics, Types & Applications.',
+                    url: 'https://www.electrical4u.com/programmable-logic-controllers/'
+                  },
+                  {
+                    title: 'HTE Technologies (A Tavoron Company). (2026). The Role of Modern PLCs in Smart Factory Integration.',
+                    url: 'https://htetechnologies.com/news/the-role-of-modern-plcs-in-smart-factory-integration/'
+                  },
+                  {
+                    title: 'Industrial Monitor Direct. (2026). Designing a Basic Conveyor System with PLC Ladder Logic: A Tutorial for Mitsubishi FX Series.',
+                    url: 'https://industrialmonitordirect.com/blogs/knowledgebase/designing-a-basic-conveyor-system-with-plc-ladder-logic-a-tutorial-for-mitsubishi-fx-series'
+                  },
+                  {
+                    title: 'Mutually Human. (2025). Predictive Maintenance with Microsoft Fabric: A Manufacturing Case Study.',
+                    url: 'https://www.mutuallyhuman.com/predictive-maintenance-with-microsoft-fabric-a-manufacturing-case-study/'
+                  },
+                  {
                     title: 'NCBI/PMC. (2025). Integration of Machine Vision and PLC-Based Control for Scalable Quality Inspection in Industry 4.0.',
                     url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12568163/'
                   },
                   {
-                    title: 'ResearchGate. (2025). Convergence of IoT and PLC in Industrial Automation: A Systematic Review.',
-                    url: 'https://www.researchgate.net/publication/390978482'
+                    title: 'PLC Blog. (2025). PLC (Programmable Logic Controller) – Basics, Types, and Applications.',
+                    url: 'https://plcblog.in/plc/basic/plc-programmable-logic-controller-basics.php'
+                  },
+                  {
+                    title: 'ResearchGate. (2025). Convergence of IoT and PLC in Industrial Automation: A Systematic Review of Emerging Trends, Technical Challenges, and Prospects.'
+                  },
+                  {
+                    title: 'ResearchGate. (2025). Smart Energy Management in Manufacturing Plants Using PLC and SCADA.'
+                  },
+                  {
+                    title: 'ScienceDirect Topics. Programmable Logic Controller — an overview.',
+                    url: 'https://www.sciencedirect.com/topics/computer-science/programmable-logic-controller'
                   }
                 ].map((item, idx) => (
                   <div key={idx} className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span>{item.title}</span>
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:underline flex items-center gap-1 shrink-0"
-                    >
-                      Buka Link <ExternalLink size={12} />
-                    </a>
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-text-dim shrink-0">{idx + 1}.</span>
+                      <span className="text-text-primary/90 leading-relaxed">{item.title}</span>
+                    </div>
+                    {item.url && (
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent hover:underline flex items-center gap-1 shrink-0 ml-5 sm:ml-0"
+                      >
+                        Buka Link <ExternalLink size={12} />
+                      </a>
+                    )}
                   </div>
                 ))}
               </div>
