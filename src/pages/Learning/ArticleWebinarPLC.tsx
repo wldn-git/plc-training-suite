@@ -1,55 +1,71 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Badge, Button } from '@/components/ui';
 import {
   ArrowLeft,
-  Clock,
   Share2,
-  CheckCircle2,
   Bookmark,
-  Cpu,
-  Zap,
   Activity,
-  ShieldCheck,
-  TrendingUp,
   FileText,
   ExternalLink,
-  Layers,
-  Lightbulb,
-  AlertTriangle,
-  Play,
   RotateCcw,
   Sparkles,
   ChevronRight,
   Server,
-  Workflow
+  Workflow,
+  Minus,
+  Square,
+  X,
+  Printer,
+  Copy,
+  Check,
+  Folder,
+  Layers,
+  ZoomIn,
+  ZoomOut,
+  Maximize2
 } from 'lucide-react';
 
 // ============================================================
-// Interactive Component 1: Scan Cycle Visualizer
+// Windows 10 Theme Tokens
 // ============================================================
-const ScanCycleWidget = () => {
+// Accent: #0078d4 (Windows 10 Blue)
+// Dark BG: #1f1f1f
+// Window Titlebar: #2b2b2b
+// Surface: #252526
+// Border: #3f3f46
+// Text: #f3f3f3
+
+// ============================================================
+// Interactive Component 1: Windows 10 Scan Cycle Diagnostics
+// ============================================================
+const ScanCycleWidgetWin10 = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const steps = [
     {
-      title: '1. Read Inputs (Bimbing Input)',
-      desc: 'PLC membaca sinyal dari semua sensor fisik (tombol, saklar, proximity) dan menyimpannya di memori Input Image.',
-      icon: SensorIcon,
-      color: 'from-blue-500/20 to-cyan-500/20 border-cyan-500/40 text-cyan-400'
+      id: '01',
+      title: '1. Read Inputs (Baca Status Sensor)',
+      tag: 'INPUT_IMAGE_SCAN',
+      desc: 'PLC membaca status semua sinyal listrik di terminal input fisik (push button, proximity, limit switch) dan menyimpannya ke memori Input Image Table (I0.0 - I1.7).',
+      status: 'INPUT_READY',
+      accent: '#0078d4'
     },
     {
+      id: '02',
       title: '2. Execute Program (Eksekusi Logika)',
-      desc: 'CPU memproses baris program Ladder dari rung teratas ke terbawah menggunakan data Input Image.',
-      icon: Cpu,
-      color: 'from-amber-500/20 to-yellow-500/20 border-amber-500/40 text-amber-400'
+      tag: 'LADDER_LOGIC_EXEC',
+      desc: 'CPU mengeksekusi instruksi Ladder Diagram baris demi baris (dari Rung 0001 ke bawah) menggunakan data snapshot yang telah dibaca dari Input Image.',
+      status: 'CPU_ACTIVE',
+      accent: '#ffb900'
     },
     {
-      title: '3. Write Outputs (Perbarui Output)',
-      desc: 'Hasil akhir logika ditulis ke Output Image, kemudian dikirim bersamaan ke modul output (motor, solenoid, lampu).',
-      icon: Zap,
-      color: 'from-emerald-500/20 to-green-500/20 border-emerald-500/40 text-emerald-400'
+      id: '03',
+      title: '3. Write Outputs (Perbarui Aktuator)',
+      tag: 'OUTPUT_IMAGE_UPDATE',
+      desc: 'Hasil akhir logika ditulis ke Output Image Table, lalu disalurkan secara serentak ke modul output fisik (kontaktor motor, selenoid valve, lampu indikator).',
+      status: 'OUTPUT_UPDATED',
+      accent: '#107c41'
     }
   ];
 
@@ -64,81 +80,87 @@ const ScanCycleWidget = () => {
   }, [isPlaying]);
 
   return (
-    <div className="my-8 p-6 rounded-2xl bg-bg-surface border border-accent/20 shadow-xl">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-        <div>
-          <div className="flex items-center gap-2 text-accent text-xs font-mono font-bold uppercase tracking-wider">
-            <Activity size={16} /> Interactive Simulator
-          </div>
-          <h4 className="text-lg font-mono font-bold text-text-primary mt-1">
-            Visualisasi Siklus Kerja PLC (Scan Cycle)
-          </h4>
-        </div>
+    <div className="my-6 border border-[#3f3f46] bg-[#252526] rounded-none shadow-md font-sans">
+      {/* Mini Window Titlebar */}
+      <div className="bg-[#2d2d2d] px-3 py-1.5 border-b border-[#3f3f46] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant={isPlaying ? 'outline' : 'primary'}
-            onClick={() => setIsPlaying(!isPlaying)}
-            leftIcon={isPlaying ? <RotateCcw size={14} /> : <Play size={14} />}
-          >
-            {isPlaying ? 'Pause Simulasi' : 'Putar Otomatis'}
-          </Button>
+          <Activity size={14} className="text-[#0078d4]" />
+          <span className="text-xs font-semibold text-[#cccccc]">Diagnostic Tool — PLC Scan Cycle Monitor</span>
+        </div>
+        <div className="flex items-center gap-1 text-[11px] font-mono text-[#858585]">
+          <span>Scan Time: 5.2 ms</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {steps.map((step, idx) => {
-          const isActive = activeStep === idx;
-          return (
-            <div
-              key={idx}
-              onClick={() => {
-                setActiveStep(idx);
-                setIsPlaying(false);
-              }}
-              className={`cursor-pointer p-4 rounded-xl border transition-all duration-300 relative overflow-hidden ${
-                isActive
-                  ? `bg-gradient-to-b ${step.color} shadow-lg scale-[1.02]`
-                  : 'bg-bg-elevated/40 border-border hover:border-white/20'
-              }`}
-            >
-              {isActive && (
-                <div className="absolute top-0 left-0 right-0 h-1 bg-accent animate-pulse" />
-              )}
-              <div className="flex items-center gap-3 mb-2">
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs ${
-                    isActive ? 'bg-black/40' : 'bg-bg-elevated text-text-muted'
-                  }`}
-                >
-                  0{idx + 1}
-                </div>
-                <h5 className="font-mono font-bold text-sm text-text-primary">
-                  {step.title.split(' ')[1]} {step.title.split(' ')[2]}
-                </h5>
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">{step.desc}</p>
-            </div>
-          );
-        })}
-      </div>
+      <div className="p-4 space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#1e1e1e] p-3 border border-[#333333]">
+          <div>
+            <p className="text-xs font-bold text-[#ffffff]">Siklus Kerja Berulang (Cyclic Execution)</p>
+            <p className="text-[11px] text-[#9d9d9d] mt-0.5">
+              PLC tidak mengeksekusi program sekali jalan, melainkan mengulang 3 tahap ini terus-menerus dalam hitungan milidetik.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className={`px-3 py-1 text-xs font-medium border transition-colors shrink-0 ${
+              isPlaying
+                ? 'bg-[#0078d4] text-white border-[#005a9e]'
+                : 'bg-[#333333] hover:bg-[#3e3e42] text-white border-[#474747]'
+            }`}
+          >
+            {isPlaying ? '⏸ Jeda Siklus' : '▶ Jalankan Otomatis'}
+          </button>
+        </div>
 
-      <div className="mt-4 p-3 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between text-xs text-text-dim font-mono">
-        <span>Kecepatan Siklus Lapangan: 1 ms - 20 ms</span>
-        <span className="text-accent">Tahap Aktif: {steps[activeStep].title}</span>
+        {/* 3 Step Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {steps.map((step, idx) => {
+            const isActive = activeStep === idx;
+            return (
+              <div
+                key={idx}
+                onClick={() => {
+                  setActiveStep(idx);
+                  setIsPlaying(false);
+                }}
+                className={`cursor-pointer p-3 border transition-all ${
+                  isActive
+                    ? 'bg-[#1f2430] border-[#0078d4] shadow-sm ring-1 ring-[#0078d4]'
+                    : 'bg-[#1e1e1e] border-[#333333] hover:border-[#4d4d4d]'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span
+                    className="text-[10px] font-mono px-1.5 py-0.5 font-bold text-white"
+                    style={{ backgroundColor: step.accent }}
+                  >
+                    STEP {step.id}
+                  </span>
+                  <span className="text-[10px] font-mono text-[#858585]">
+                    {isActive ? '● RUNNING' : '○ IDLE'}
+                  </span>
+                </div>
+                <h5 className="text-xs font-bold text-white mb-1.5">{step.title}</h5>
+                <p className="text-[11px] text-[#cccccc] leading-relaxed">{step.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Status Bar */}
+        <div className="bg-[#1e1e1e] px-3 py-2 border border-[#333333] flex items-center justify-between text-[11px] text-[#9d9d9d] font-mono">
+          <span>Status Sistem: NORMAL (Cyclic Mode)</span>
+          <span className="text-[#0078d4] font-semibold">Tahap Terpilih: Step 0{activeStep + 1}</span>
+        </div>
       </div>
     </div>
   );
 };
 
-function SensorIcon(props: any) {
-  return <Workflow {...props} />;
-}
-
 // ============================================================
-// Interactive Component 2: Start-Stop Ladder Diagram Simulator (SVG Edition)
+// Interactive Component 2: Windows 10 Ladder Simulator (TIA Portal Look)
 // ============================================================
-const StartStopLadderWidget = () => {
+const StartStopLadderWin10 = () => {
   const [startPressed, setStartPressed] = useState(false);
   const [stopPressed, setStopPressed] = useState(false);
   const [motorOn, setMotorOn] = useState(false);
@@ -154,407 +176,323 @@ const StartStopLadderWidget = () => {
     }
   }, [startPressed, stopPressed, isPowerFlowing]);
 
-  // Wire segments status
-  const wireStartHot = true; // left rail to start contact branch
+  const wireStartHot = true;
   const wireTopStartOutHot = startPressed;
   const wireBottomLatchOutHot = motorOn;
   const wireAfterParallelHot = startPressed || motorOn;
   const wireAfterStopHot = wireAfterParallelHot && !stopPressed;
   const wireCoilHot = wireAfterStopHot;
 
-  // Real-time Explanation text
-  let statusExplanation = {
-    title: 'Standby / Motor Berhenti',
-    badge: 'OFF',
-    badgeColor: 'bg-gray-800 text-gray-400 border-gray-700',
-    desc: 'Daya dari rel kiri tertahan di kontak Start (I0.0) dan Kontak Latch (Q0.0) karena keduanya masih terbuka (FALSE). Tekan tombol START di bawah untuk menyalakan motor.'
-  };
-
-  if (stopPressed) {
-    statusExplanation = {
-      title: 'Tombol STOP Ditekan (Sirkuit Terputus)',
-      badge: 'STOPPED',
-      badgeColor: 'bg-red-500/20 text-red-400 border-red-500/40',
-      desc: 'Kontak NC Stop (I0.1) terbuka memutus seluruh aliran daya ke Koil Motor (Q0.0). Motor langsung berhenti dan kontak pengunci (latch) terlepas.'
-    };
-  } else if (startPressed) {
-    statusExplanation = {
-      title: 'Tombol START Ditekan (Pemicu Awal)',
-      badge: 'START PULSE',
-      badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
-      desc: 'Kontak Start (I0.0) menutup (TRUE). Arus daya mengalir melalui Start -> Stop (I0.1) -> mengaktifkan Koil Motor (Q0.0). Kontak sekunder Q0.0 di cabang bawah otomatis ikut menutup!'
-    };
-  } else if (motorOn) {
-    statusExplanation = {
-      title: 'Motor Berjalan via Self-Holding (Terkunci)',
-      badge: 'LATCHED (ON)',
-      badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40',
-      desc: 'Tombol Start sudah dilepas (terbuka), TETAPI daya tetap mengalir lewat cabang bawah (Kontak Latch Q0.0). Inilah prinsip dasar Self-Holding (Seal-In Circuit) di industri!'
-    };
-  }
-
   return (
-    <div className="my-8 p-6 rounded-2xl bg-[#0b0f19] border border-accent/20 shadow-2xl overflow-hidden">
-      {/* Header & Reset */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-4 border-b border-white/10">
-        <div>
-          <div className="flex items-center gap-2 text-accent text-xs font-mono font-bold uppercase tracking-wider">
-            <Sparkles size={16} /> Skema Ladder Diagram Interaktif (IEC 61131-3)
-          </div>
-          <h4 className="text-lg font-mono font-bold text-text-primary mt-0.5">
-            Rangkaian Start-Stop dengan Self-Holding (Seal-In)
-          </h4>
+    <div className="my-6 border border-[#3f3f46] bg-[#252526] shadow-md font-sans">
+      {/* Window Titlebar */}
+      <div className="bg-[#2d2d2d] px-3 py-1.5 border-b border-[#3f3f46] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Workflow size={14} className="text-[#0078d4]" />
+          <span className="text-xs font-semibold text-[#cccccc]">Ladder Logic Editor — [Main_OB1 : Rung 0001]</span>
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
+        <button
           onClick={() => {
             setStartPressed(false);
             setStopPressed(false);
             setMotorOn(false);
           }}
-          leftIcon={<RotateCcw size={14} />}
+          className="flex items-center gap-1 px-2 py-0.5 text-[11px] bg-[#333333] hover:bg-[#3e3e42] text-[#cccccc] border border-[#474747]"
         >
-          Reset Simulasi
-        </Button>
-      </div>
-
-      {/* SVG Ladder Diagram Canvas */}
-      <div className="w-full overflow-x-auto bg-[#070a11] rounded-xl border border-white/10 p-2 sm:p-4 my-4">
-        <svg
-          viewBox="0 0 760 210"
-          className="w-full min-w-[680px] h-auto select-none"
-          style={{ fontFamily: 'monospace' }}
-        >
-          {/* CSS Definition for Flow Animation */}
-          <defs>
-            <style>{`
-              @keyframes powerFlow {
-                from { stroke-dashoffset: 20; }
-                to { stroke-dashoffset: 0; }
-              }
-              .power-flow-anim {
-                stroke-dasharray: 6 4;
-                animation: powerFlow 0.6s linear infinite;
-              }
-            `}</style>
-            <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-            <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          {/* Left Power Rail (L+ 24V) */}
-          <line x1="30" y1="20" x2="30" y2="190" stroke="#0284c7" strokeWidth="6" strokeLinecap="round" />
-          <text x="30" y="14" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">L+ (24V)</text>
-
-          {/* Right Power Rail (M 0V) */}
-          <line x1="730" y1="20" x2="730" y2="190" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
-          <text x="730" y="14" fill="#94a3b8" fontSize="11" fontWeight="bold" textAnchor="middle">M (0V)</text>
-
-          {/* Rung Number Label */}
-          <text x="42" y="55" fill="#64748b" fontSize="10">Rung 0001</text>
-
-          {/* --- MAIN LINE WIRES --- */}
-          {/* Wire 1: Left Rail to Branch 1 */}
-          <line
-            x1="30" y1="65" x2="100" y2="65"
-            stroke={wireStartHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-            className={wireStartHot ? 'power-flow-anim' : ''}
-          />
-          {/* Node Point 1 */}
-          <circle cx="100" cy="65" r="4" fill={wireStartHot ? '#10b981' : '#334155'} />
-
-          {/* Top Branch to Start Contact */}
-          <line
-            x1="100" y1="65" x2="160" y2="65"
-            stroke={wireStartHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-            className={wireStartHot ? 'power-flow-anim' : ''}
-          />
-
-          {/* --- CONTACT 1: START (NO) --- */}
-          <g transform="translate(160, 65)">
-            {/* Terminal Left */}
-            <line x1="0" y1="0" x2="18" y2="0" stroke={wireStartHot ? '#10b981' : '#334155'} strokeWidth="3" />
-            <line x1="18" y1="-20" x2="18" y2="20" stroke={startPressed ? '#10b981' : '#94a3b8'} strokeWidth="3.5" />
-
-            {/* Bridge when pressed */}
-            {startPressed && (
-              <line x1="18" y1="0" x2="42" y2="0" stroke="#10b981" strokeWidth="4" filter="url(#glow-green)" />
-            )}
-
-            {/* Terminal Right */}
-            <line x1="42" y1="-20" x2="42" y2="20" stroke={startPressed ? '#10b981' : '#94a3b8'} strokeWidth="3.5" />
-            <line x1="42" y1="0" x2="60" y2="0" stroke={wireTopStartOutHot ? '#10b981' : '#334155'} strokeWidth="3" className={wireTopStartOutHot ? 'power-flow-anim' : ''} />
-
-            {/* Labels */}
-            <text x="30" y="-26" fill={startPressed ? '#10b981' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
-              START_BTN
-            </text>
-            <text x="30" y="34" fill={startPressed ? '#10b981' : '#94a3b8'} fontSize="10" textAnchor="middle">
-              I0.0 (NO)
-            </text>
-            <rect
-              x="10" y="40" width="40" height="15" rx="3"
-              fill={startPressed ? '#065f46' : '#1e293b'}
-              stroke={startPressed ? '#10b981' : '#475569'}
-              strokeWidth="1"
-            />
-            <text x="30" y="51" fill={startPressed ? '#34d399' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
-              {startPressed ? 'TRUE' : 'FALSE'}
-            </text>
-          </g>
-
-          {/* Wire from Start to Node 2 */}
-          <line
-            x1="220" y1="65" x2="280" y2="65"
-            stroke={wireTopStartOutHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-            className={wireTopStartOutHot ? 'power-flow-anim' : ''}
-          />
-
-          {/* --- PARALLEL BOTTOM BRANCH (MOTOR_M1 SELF-HOLD) --- */}
-          {/* Drop line */}
-          <line
-            x1="100" y1="65" x2="100" y2="145"
-            stroke={wireStartHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-          />
-          <line
-            x1="100" y1="145" x2="160" y2="145"
-            stroke={wireStartHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-            className={wireStartHot ? 'power-flow-anim' : ''}
-          />
-
-          {/* CONTACT 2: MOTOR_M1 LATCH (NO) */}
-          <g transform="translate(160, 145)">
-            {/* Terminal Left */}
-            <line x1="0" y1="0" x2="18" y2="0" stroke={wireStartHot ? '#10b981' : '#334155'} strokeWidth="3" />
-            <line x1="18" y1="-18" x2="18" y2="18" stroke={motorOn ? '#06b6d4' : '#94a3b8'} strokeWidth="3.5" />
-
-            {/* Bridge when latched */}
-            {motorOn && (
-              <line x1="18" y1="0" x2="42" y2="0" stroke="#06b6d4" strokeWidth="4" filter="url(#glow-cyan)" />
-            )}
-
-            {/* Terminal Right */}
-            <line x1="42" y1="-18" x2="42" y2="18" stroke={motorOn ? '#06b6d4' : '#94a3b8'} strokeWidth="3.5" />
-            <line x1="42" y1="0" x2="60" y2="0" stroke={wireBottomLatchOutHot ? '#06b6d4' : '#334155'} strokeWidth="3" className={wireBottomLatchOutHot ? 'power-flow-anim' : ''} />
-
-            {/* Labels */}
-            <text x="30" y="-24" fill={motorOn ? '#06b6d4' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
-              MOTOR_M1
-            </text>
-            <text x="30" y="32" fill={motorOn ? '#06b6d4' : '#94a3b8'} fontSize="10" textAnchor="middle">
-              Q0.0 (Latch)
-            </text>
-            <rect
-              x="10" y="37" width="40" height="15" rx="3"
-              fill={motorOn ? '#164e63' : '#1e293b'}
-              stroke={motorOn ? '#06b6d4' : '#475569'}
-              strokeWidth="1"
-            />
-            <text x="30" y="48" fill={motorOn ? '#67e8f9' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
-              {motorOn ? 'TRUE' : 'FALSE'}
-            </text>
-          </g>
-
-          {/* Recombine bottom branch to Node 2 */}
-          <line
-            x1="220" y1="145" x2="280" y2="145"
-            stroke={wireBottomLatchOutHot ? '#06b6d4' : '#334155'}
-            strokeWidth="3"
-            className={wireBottomLatchOutHot ? 'power-flow-anim' : ''}
-          />
-          <line
-            x1="280" y1="145" x2="280" y2="65"
-            stroke={wireBottomLatchOutHot ? '#06b6d4' : '#334155'}
-            strokeWidth="3"
-          />
-          {/* Node Point 2 */}
-          <circle cx="280" cy="65" r="4" fill={wireAfterParallelHot ? '#10b981' : '#334155'} />
-
-          {/* Wire from Node 2 to STOP Contact */}
-          <line
-            x1="280" y1="65" x2="360" y2="65"
-            stroke={wireAfterParallelHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-            className={wireAfterParallelHot ? 'power-flow-anim' : ''}
-          />
-
-          {/* --- CONTACT 3: STOP (NC) --- */}
-          <g transform="translate(360, 65)">
-            {/* Terminal Left */}
-            <line x1="0" y1="0" x2="18" y2="0" stroke={wireAfterParallelHot ? '#10b981' : '#334155'} strokeWidth="3" />
-            <line x1="18" y1="-20" x2="18" y2="20" stroke={stopPressed ? '#ef4444' : '#94a3b8'} strokeWidth="3.5" />
-
-            {/* Diagonal Slash for Normally Closed Contact */}
-            <line
-              x1="12"
-              y1="22"
-              x2="48"
-              y2="-22"
-              stroke={stopPressed ? '#ef4444' : wireAfterParallelHot ? '#10b981' : '#94a3b8'}
-              strokeWidth="3"
-              transform={stopPressed ? 'rotate(-25 30 0)' : ''}
-              className={stopPressed ? 'transition-all duration-200' : ''}
-            />
-
-            {/* Terminal Right */}
-            <line x1="42" y1="-20" x2="42" y2="20" stroke={stopPressed ? '#ef4444' : '#94a3b8'} strokeWidth="3.5" />
-            <line x1="42" y1="0" x2="60" y2="0" stroke={wireAfterStopHot ? '#10b981' : '#334155'} strokeWidth="3" className={wireAfterStopHot ? 'power-flow-anim' : ''} />
-
-            {/* Labels */}
-            <text x="30" y="-26" fill={stopPressed ? '#ef4444' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
-              STOP_BTN
-            </text>
-            <text x="30" y="34" fill={stopPressed ? '#ef4444' : '#94a3b8'} fontSize="10" textAnchor="middle">
-              I0.1 (NC)
-            </text>
-            <rect
-              x="5" y="40" width="50" height="15" rx="3"
-              fill={stopPressed ? '#7f1d1d' : '#065f46'}
-              stroke={stopPressed ? '#ef4444' : '#10b981'}
-              strokeWidth="1"
-            />
-            <text x="30" y="51" fill={stopPressed ? '#fca5a5' : '#6ee7b7'} fontSize="9" fontWeight="bold" textAnchor="middle">
-              {stopPressed ? 'OPEN (0)' : 'CLOSED (1)'}
-            </text>
-          </g>
-
-          {/* Wire from Stop to Coil */}
-          <line
-            x1="420" y1="65" x2="540" y2="65"
-            stroke={wireAfterStopHot ? '#10b981' : '#334155'}
-            strokeWidth="3"
-            className={wireAfterStopHot ? 'power-flow-anim' : ''}
-          />
-
-          {/* --- COIL OUTPUT: MOTOR_M1 (Q0.0) --- */}
-          <g transform="translate(540, 65)">
-            {/* Lead wire */}
-            <line x1="0" y1="0" x2="20" y2="0" stroke={wireCoilHot ? '#10b981' : '#334155'} strokeWidth="3" />
-
-            {/* Coil Arcs */}
-            <path
-              d="M 22 -22 A 25 25 0 0 0 22 22"
-              fill="none"
-              stroke={motorOn ? '#10b981' : '#94a3b8'}
-              strokeWidth="3.5"
-            />
-            <path
-              d="M 58 -22 A 25 25 0 0 1 58 22"
-              fill="none"
-              stroke={motorOn ? '#10b981' : '#94a3b8'}
-              strokeWidth="3.5"
-            />
-
-            {/* Center energized bulb / glow */}
-            <circle
-              cx="40" cy="0" r="14"
-              fill={motorOn ? '#10b981' : '#1e293b'}
-              stroke={motorOn ? '#34d399' : '#475569'}
-              strokeWidth="1.5"
-              filter={motorOn ? 'url(#glow-green)' : ''}
-            />
-            <text x="40" y="4" fill={motorOn ? '#022c22' : '#94a3b8'} fontSize="10" fontWeight="bold" textAnchor="middle">
-              M1
-            </text>
-
-            {/* Lead out to right rail */}
-            <line x1="60" y1="0" x2="190" y2="0" stroke={wireCoilHot ? '#10b981' : '#334155'} strokeWidth="3" />
-
-            {/* Labels */}
-            <text x="40" y="-26" fill={motorOn ? '#10b981' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
-              MOTOR_M1
-            </text>
-            <text x="40" y="34" fill={motorOn ? '#10b981' : '#94a3b8'} fontSize="10" textAnchor="middle">
-              Q0.0 (Coil)
-            </text>
-            <rect
-              x="12" y="40" width="56" height="15" rx="3"
-              fill={motorOn ? '#065f46' : '#1e293b'}
-              stroke={motorOn ? '#10b981' : '#475569'}
-              strokeWidth="1"
-            />
-            <text x="40" y="51" fill={motorOn ? '#a7f3d0' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
-              {motorOn ? 'ACTIVE (1)' : 'OFF (0)'}
-            </text>
-          </g>
-        </svg>
-      </div>
-
-      {/* Control Push Buttons */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
-        <button
-          onMouseDown={() => setStartPressed(true)}
-          onMouseUp={() => setStartPressed(false)}
-          onTouchStart={() => setStartPressed(true)}
-          onTouchEnd={() => setStartPressed(false)}
-          className={`flex items-center justify-center gap-3 p-4 rounded-xl font-mono text-sm font-bold transition-all shadow-lg select-none cursor-pointer border ${
-            startPressed
-              ? 'bg-emerald-500 text-black border-emerald-300 shadow-emerald-500/50 scale-[0.98]'
-              : 'bg-gradient-to-r from-emerald-950/80 to-emerald-900/60 text-emerald-300 border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-900/80'
-          }`}
-        >
-          <div className={`w-3.5 h-3.5 rounded-full ${startPressed ? 'bg-black animate-ping' : 'bg-emerald-400'}`} />
-          <span>{startPressed ? '▶ [HOLDING] START AKTIF (I0.0 = 1)' : '▶ TEKAN TOMBOL START (NO)'}</span>
-        </button>
-
-        <button
-          onMouseDown={() => setStopPressed(true)}
-          onMouseUp={() => setStopPressed(false)}
-          onTouchStart={() => setStopPressed(true)}
-          onTouchEnd={() => setStopPressed(false)}
-          className={`flex items-center justify-center gap-3 p-4 rounded-xl font-mono text-sm font-bold transition-all shadow-lg select-none cursor-pointer border ${
-            stopPressed
-              ? 'bg-red-500 text-white border-red-300 shadow-red-500/50 scale-[0.98]'
-              : 'bg-gradient-to-r from-red-950/80 to-red-900/60 text-red-300 border-red-500/40 hover:border-red-400 hover:bg-red-900/80'
-          }`}
-        >
-          <div className={`w-3.5 h-3.5 rounded-full ${stopPressed ? 'bg-white animate-ping' : 'bg-red-400'}`} />
-          <span>{stopPressed ? '⏹ [HOLDING] STOP MEMUTUS (I0.1 = 0)' : '⏹ TEKAN TOMBOL STOP (NC)'}</span>
+          <RotateCcw size={10} /> Reset Rangkaian
         </button>
       </div>
 
-      {/* Real-time Electrical Explanation Card */}
-      <div className="p-4 rounded-xl bg-bg-surface border border-white/10 space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono uppercase text-text-dim font-bold">Penjelasan Alur Daya:</span>
-            <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${statusExplanation.badgeColor}`}>
-              {statusExplanation.badge}
-            </span>
+      {/* Editor Canvas */}
+      <div className="p-4 space-y-4">
+        <div className="bg-[#1e1e1e] p-3 border border-[#333333] flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold text-white">Rangkaian Kontrol Motor Start-Stop (Self-Holding Latch)</span>
+            <p className="text-[11px] text-[#9d9d9d] mt-0.5">
+              Gunakan tombol di bawah untuk menyimulasikan push-button fisik di panel kontrol.
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-text-dim">Motor Fisik:</span>
-            <span className={`text-xs font-mono font-bold flex items-center gap-1 ${motorOn ? 'text-emerald-400 animate-pulse' : 'text-text-muted'}`}>
-              <Activity size={14} className={motorOn ? 'animate-spin' : ''} />
-              {motorOn ? 'RUNNING (1500 RPM)' : 'STOPPED (0 RPM)'}
+          <div className="text-right font-mono text-[11px]">
+            <span className="text-[#858585]">Motor Status: </span>
+            <span className={`font-bold ${motorOn ? 'text-[#107c41]' : 'text-[#d13438]'}`}>
+              {motorOn ? 'RUNNING (Q0.0 = 1)' : 'STOPPED (Q0.0 = 0)'}
             </span>
           </div>
         </div>
 
-        <h5 className="font-mono font-bold text-sm text-text-primary">
-          {statusExplanation.title}
-        </h5>
-        <p className="text-xs text-text-muted leading-relaxed">
-          {statusExplanation.desc}
-        </p>
+        {/* SVG Ladder Schematic */}
+        <div className="w-full overflow-x-auto bg-[#181818] border border-[#333333] p-4">
+          <svg
+            viewBox="0 0 760 210"
+            className="w-full min-w-[680px] h-auto select-none"
+            style={{ fontFamily: 'Segoe UI, monospace' }}
+          >
+            <defs>
+              <style>{`
+                @keyframes powerFlowWin {
+                  from { stroke-dashoffset: 20; }
+                  to { stroke-dashoffset: 0; }
+                }
+                .power-flow-win {
+                  stroke-dasharray: 6 4;
+                  animation: powerFlowWin 0.6s linear infinite;
+                }
+              `}</style>
+            </defs>
+
+            {/* Left Power Rail (L+ 24V) */}
+            <line x1="30" y1="20" x2="30" y2="190" stroke="#0078d4" strokeWidth="6" />
+            <text x="30" y="14" fill="#0078d4" fontSize="11" fontWeight="bold" textAnchor="middle">L+ (24V)</text>
+
+            {/* Right Power Rail (M 0V) */}
+            <line x1="730" y1="20" x2="730" y2="190" stroke="#767676" strokeWidth="6" />
+            <text x="730" y="14" fill="#9d9d9d" fontSize="11" fontWeight="bold" textAnchor="middle">M (0V)</text>
+
+            <text x="42" y="55" fill="#767676" fontSize="10" fontWeight="bold">Network 1: Motor Control</text>
+
+            {/* Wire 1: Left Rail to Branch 1 */}
+            <line
+              x1="30" y1="65" x2="100" y2="65"
+              stroke={wireStartHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireStartHot ? 'power-flow-win' : ''}
+            />
+            <circle cx="100" cy="65" r="4" fill={wireStartHot ? '#107c41' : '#4d4d4d'} />
+
+            {/* Top Branch to Start Contact */}
+            <line
+              x1="100" y1="65" x2="160" y2="65"
+              stroke={wireStartHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireStartHot ? 'power-flow-win' : ''}
+            />
+
+            {/* CONTACT 1: START (NO) */}
+            <g transform="translate(160, 65)">
+              <line x1="0" y1="0" x2="18" y2="0" stroke={wireStartHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" />
+              <line x1="18" y1="-20" x2="18" y2="20" stroke={startPressed ? '#107c41' : '#cccccc'} strokeWidth="3.5" />
+
+              {startPressed && (
+                <line x1="18" y1="0" x2="42" y2="0" stroke="#107c41" strokeWidth="4" />
+              )}
+
+              <line x1="42" y1="-20" x2="42" y2="20" stroke={startPressed ? '#107c41' : '#cccccc'} strokeWidth="3.5" />
+              <line x1="42" y1="0" x2="60" y2="0" stroke={wireTopStartOutHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" className={wireTopStartOutHot ? 'power-flow-win' : ''} />
+
+              <text x="30" y="-26" fill={startPressed ? '#107c41' : '#ffffff'} fontSize="11" fontWeight="bold" textAnchor="middle">
+                "Start_Btn"
+              </text>
+              <text x="30" y="34" fill={startPressed ? '#107c41' : '#9d9d9d'} fontSize="10" textAnchor="middle">
+                %I0.0 (NO)
+              </text>
+              <rect
+                x="10" y="40" width="40" height="15"
+                fill={startPressed ? '#107c41' : '#2d2d2d'}
+                stroke={startPressed ? '#107c41' : '#4d4d4d'}
+                strokeWidth="1"
+              />
+              <text x="30" y="51" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle">
+                {startPressed ? 'TRUE' : 'FALSE'}
+              </text>
+            </g>
+
+            {/* Wire from Start to Node 2 */}
+            <line
+              x1="220" y1="65" x2="280" y2="65"
+              stroke={wireTopStartOutHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireTopStartOutHot ? 'power-flow-win' : ''}
+            />
+
+            {/* PARALLEL BOTTOM BRANCH (MOTOR LATCH) */}
+            <line
+              x1="100" y1="65" x2="100" y2="145"
+              stroke={wireStartHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+            />
+            <line
+              x1="100" y1="145" x2="160" y2="145"
+              stroke={wireStartHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireStartHot ? 'power-flow-win' : ''}
+            />
+
+            {/* CONTACT 2: MOTOR LATCH (NO) */}
+            <g transform="translate(160, 145)">
+              <line x1="0" y1="0" x2="18" y2="0" stroke={wireStartHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" />
+              <line x1="18" y1="-18" x2="18" y2="18" stroke={motorOn ? '#0078d4' : '#cccccc'} strokeWidth="3.5" />
+
+              {motorOn && (
+                <line x1="18" y1="0" x2="42" y2="0" stroke="#0078d4" strokeWidth="4" />
+              )}
+
+              <line x1="42" y1="-18" x2="42" y2="18" stroke={motorOn ? '#0078d4' : '#cccccc'} strokeWidth="3.5" />
+              <line x1="42" y1="0" x2="60" y2="0" stroke={wireBottomLatchOutHot ? '#0078d4' : '#4d4d4d'} strokeWidth="3" className={wireBottomLatchOutHot ? 'power-flow-win' : ''} />
+
+              <text x="30" y="-24" fill={motorOn ? '#0078d4' : '#ffffff'} fontSize="11" fontWeight="bold" textAnchor="middle">
+                "Motor_M1"
+              </text>
+              <text x="30" y="32" fill={motorOn ? '#0078d4' : '#9d9d9d'} fontSize="10" textAnchor="middle">
+                %Q0.0 (Latch)
+              </text>
+              <rect
+                x="10" y="37" width="40" height="15"
+                fill={motorOn ? '#0078d4' : '#2d2d2d'}
+                stroke={motorOn ? '#0078d4' : '#4d4d4d'}
+                strokeWidth="1"
+              />
+              <text x="30" y="48" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle">
+                {motorOn ? 'TRUE' : 'FALSE'}
+              </text>
+            </g>
+
+            {/* Recombine bottom branch */}
+            <line
+              x1="220" y1="145" x2="280" y2="145"
+              stroke={wireBottomLatchOutHot ? '#0078d4' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireBottomLatchOutHot ? 'power-flow-win' : ''}
+            />
+            <line
+              x1="280" y1="145" x2="280" y2="65"
+              stroke={wireBottomLatchOutHot ? '#0078d4' : '#4d4d4d'}
+              strokeWidth="3"
+            />
+            <circle cx="280" cy="65" r="4" fill={wireAfterParallelHot ? '#107c41' : '#4d4d4d'} />
+
+            {/* Wire to Stop Contact */}
+            <line
+              x1="280" y1="65" x2="360" y2="65"
+              stroke={wireAfterParallelHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireAfterParallelHot ? 'power-flow-win' : ''}
+            />
+
+            {/* CONTACT 3: STOP (NC) */}
+            <g transform="translate(360, 65)">
+              <line x1="0" y1="0" x2="18" y2="0" stroke={wireAfterParallelHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" />
+              <line x1="18" y1="-20" x2="18" y2="20" stroke={stopPressed ? '#d13438' : '#cccccc'} strokeWidth="3.5" />
+
+              <line
+                x1="12" y1="22" x2="48" y2="-22"
+                stroke={stopPressed ? '#d13438' : wireAfterParallelHot ? '#107c41' : '#cccccc'}
+                strokeWidth="3"
+                transform={stopPressed ? 'rotate(-25 30 0)' : ''}
+              />
+
+              <line x1="42" y1="-20" x2="42" y2="20" stroke={stopPressed ? '#d13438' : '#cccccc'} strokeWidth="3.5" />
+              <line x1="42" y1="0" x2="60" y2="0" stroke={wireAfterStopHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" className={wireAfterStopHot ? 'power-flow-win' : ''} />
+
+              <text x="30" y="-26" fill={stopPressed ? '#d13438' : '#ffffff'} fontSize="11" fontWeight="bold" textAnchor="middle">
+                "Stop_Btn"
+              </text>
+              <text x="30" y="34" fill={stopPressed ? '#d13438' : '#9d9d9d'} fontSize="10" textAnchor="middle">
+                %I0.1 (NC)
+              </text>
+              <rect
+                x="5" y="40" width="50" height="15"
+                fill={stopPressed ? '#d13438' : '#107c41'}
+                stroke={stopPressed ? '#d13438' : '#107c41'}
+                strokeWidth="1"
+              />
+              <text x="30" y="51" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle">
+                {stopPressed ? 'OPEN (0)' : 'CLOSED (1)'}
+              </text>
+            </g>
+
+            {/* Wire from Stop to Coil */}
+            <line
+              x1="420" y1="65" x2="540" y2="65"
+              stroke={wireAfterStopHot ? '#107c41' : '#4d4d4d'}
+              strokeWidth="3"
+              className={wireAfterStopHot ? 'power-flow-win' : ''}
+            />
+
+            {/* COIL OUTPUT: MOTOR (Q0.0) */}
+            <g transform="translate(540, 65)">
+              <line x1="0" y1="0" x2="20" y2="0" stroke={wireCoilHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" />
+
+              <path
+                d="M 22 -22 A 25 25 0 0 0 22 22"
+                fill="none"
+                stroke={motorOn ? '#107c41' : '#cccccc'}
+                strokeWidth="3.5"
+              />
+              <path
+                d="M 58 -22 A 25 25 0 0 1 58 22"
+                fill="none"
+                stroke={motorOn ? '#107c41' : '#cccccc'}
+                strokeWidth="3.5"
+              />
+
+              <circle
+                cx="40" cy="0" r="13"
+                fill={motorOn ? '#107c41' : '#2d2d2d'}
+                stroke={motorOn ? '#107c41' : '#4d4d4d'}
+                strokeWidth="1.5"
+              />
+              <text x="40" y="4" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
+                M1
+              </text>
+
+              <line x1="60" y1="0" x2="190" y2="0" stroke={wireCoilHot ? '#107c41' : '#4d4d4d'} strokeWidth="3" />
+
+              <text x="40" y="-26" fill={motorOn ? '#107c41' : '#ffffff'} fontSize="11" fontWeight="bold" textAnchor="middle">
+                "Motor_M1"
+              </text>
+              <text x="40" y="34" fill={motorOn ? '#107c41' : '#9d9d9d'} fontSize="10" textAnchor="middle">
+                %Q0.0 (Coil)
+              </text>
+              <rect
+                x="12" y="40" width="56" height="15"
+                fill={motorOn ? '#107c41' : '#2d2d2d'}
+                stroke={motorOn ? '#107c41' : '#4d4d4d'}
+                strokeWidth="1"
+              />
+              <text x="40" y="51" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle">
+                {motorOn ? 'ACTIVE (1)' : 'OFF (0)'}
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* Windows 10 Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onMouseDown={() => setStartPressed(true)}
+            onMouseUp={() => setStartPressed(false)}
+            onTouchStart={() => setStartPressed(true)}
+            onTouchEnd={() => setStartPressed(false)}
+            className={`p-3 text-xs font-semibold border flex items-center justify-center gap-2 select-none transition-colors ${
+              startPressed
+                ? 'bg-[#107c41] text-white border-[#0e6b37]'
+                : 'bg-[#1b4332] hover:bg-[#2d6a4f] text-[#95d5b2] border-[#2d6a4f]'
+            }`}
+          >
+            <span>{startPressed ? '● [HOLDING] START AKTIF (I0.0 = 1)' : '▶ TEKAN TOMBOL START (NO)'}</span>
+          </button>
+
+          <button
+            onMouseDown={() => setStopPressed(true)}
+            onMouseUp={() => setStopPressed(false)}
+            onTouchStart={() => setStopPressed(true)}
+            onTouchEnd={() => setStopPressed(false)}
+            className={`p-3 text-xs font-semibold border flex items-center justify-center gap-2 select-none transition-colors ${
+              stopPressed
+                ? 'bg-[#d13438] text-white border-[#a80000]'
+                : 'bg-[#4a151b] hover:bg-[#721c24] text-[#f8d7da] border-[#721c24]'
+            }`}
+          >
+            <span>{stopPressed ? '■ [HOLDING] STOP MEMUTUS (I0.1 = 0)' : '⏹ TEKAN TOMBOL STOP (NC)'}</span>
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 // ============================================================
-// Main Page Component
+// Main Windows 10 Article Window Component
 // ============================================================
 export default function ArticleWebinarPLC() {
   const navigate = useNavigate();
@@ -563,14 +501,14 @@ export default function ArticleWebinarPLC() {
   const [bookmarked, setBookmarked] = useState(false);
 
   const sections = [
-    { id: 'sec-1', label: '1. Pengantar' },
+    { id: 'sec-1', label: '1. Pengantar Relevansi PLC' },
     { id: 'sec-2', label: '2. Tujuan Pembelajaran' },
     { id: 'sec-3', label: '3. Dasar-Dasar PLC' },
-    { id: 'sec-4', label: '4. Logika Ladder' },
-    { id: 'sec-5', label: '5. Pilar Industri 4.0' },
-    { id: 'sec-6', label: '6. Studi Kasus' },
-    { id: 'sec-7', label: '7. Key Takeaways' },
-    { id: 'sec-8', label: '8. Daftar Pustaka' }
+    { id: 'sec-4', label: '4. Logika Dasar Ladder Diagram' },
+    { id: 'sec-5', label: '5. PLC sebagai Pilar Industri 4.0' },
+    { id: 'sec-6', label: '6. Tiga Studi Kasus Industri' },
+    { id: 'sec-7', label: '7. Rangkuman & Key Takeaways' },
+    { id: 'sec-8', label: '8. Daftar Pustaka Lengkap' }
   ];
 
   const handleCopyLink = () => {
@@ -588,187 +526,190 @@ export default function ArticleWebinarPLC() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto pb-24 animate-fade-in">
-      {/* Top Breadcrumb & Action Header */}
-      <div className="flex items-center justify-between mb-6">
-        <Button
-          variant="ghost"
-          size="sm"
-          leftIcon={<ArrowLeft size={16} />}
-          onClick={() => navigate('/learning')}
-        >
-          Kembali ke Kurikulum
-        </Button>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setBookmarked(!bookmarked)}
-            leftIcon={
-              <Bookmark
-                size={14}
-                className={bookmarked ? 'fill-accent text-accent' : ''}
-              />
-            }
-          >
-            {bookmarked ? 'Tersimpan' : 'Simpan'}
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyLink}
-            leftIcon={<Share2 size={14} />}
-          >
-            {copied ? 'Tersalin!' : 'Bagikan'}
-          </Button>
-        </div>
-      </div>
-
-      {/* Hero Banner Section */}
-      <Card className="overflow-hidden border-accent/30 shadow-2xl mb-8 relative">
-        <div className="bg-gradient-to-br from-bg-surface via-bg-base to-accent/10 p-8 lg:p-12 relative overflow-hidden">
-          <div className="absolute -right-16 -top-16 opacity-10 pointer-events-none">
-            <Cpu size={320} className="text-accent" />
+    <div className="max-w-7xl mx-auto pb-16 font-sans text-[#f3f3f3]">
+      {/* Windows 10 Desktop Application Window Frame */}
+      <div className="border border-[#454545] bg-[#1e1e1e] shadow-2xl overflow-hidden">
+        {/* ============================================================ */}
+        {/* 1. Windows 10 Title Bar */}
+        {/* ============================================================ */}
+        <div className="bg-[#2d2d2d] h-9 border-b border-[#3e3e42] flex items-center justify-between select-none px-2">
+          {/* Left: Window Icon & Title */}
+          <div className="flex items-center gap-2 text-xs text-[#cccccc] pl-1 font-medium">
+            <div className="w-4 h-4 bg-[#0078d4] text-white flex items-center justify-center font-bold text-[10px]">
+              W
+            </div>
+            <span>Modul_Webinar_Basic_PLC_Industri_4.0.pdf — PLC Training Suite Reader</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Badge variant="accent">Modul Webinar Eksklusif</Badge>
-            <Badge variant="warning">Industri 4.0</Badge>
-            <Badge variant="success">Dasar PLC</Badge>
-            <span className="text-text-dim font-mono text-xs flex items-center gap-1 ml-auto">
-              <Clock size={12} /> 15 min. read
-            </span>
-          </div>
-
-          <h1 className="text-3xl lg:text-5xl font-mono font-black text-text-primary leading-tight max-w-4xl">
-            BASIC PLC: Fondasi Kontrol Otomasi untuk Mendukung Transformasi Industri 4.0
-          </h1>
-
-          <p className="text-text-muted mt-4 text-base lg:text-xl max-w-3xl leading-relaxed italic">
-            "Dari relay ke smart factory: memahami PLC sebagai jembatan antara mesin dan data."
-          </p>
-
-          <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-text-dim">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent font-bold">
-                W
-              </div>
-              <div>
-                <p className="text-text-primary font-bold">WLDN Engineering Series</p>
-                <p className="text-[10px]">Dipublikasikan untuk PLC Training Suite</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <div>
-                <span className="text-accent font-bold">11</span> Halaman PDF
-              </div>
-              <div>
-                <span className="text-accent font-bold">3</span> Studi Kasus Nyata
-              </div>
-              <div>
-                <span className="text-accent font-bold">100%</span> Gratis
-              </div>
-            </div>
+          {/* Right: Window Controls (Minimize, Maximize, Close) */}
+          <div className="flex items-center h-full">
+            <button
+              onClick={() => navigate('/learning')}
+              title="Kembali ke Kurikulum"
+              className="h-full px-3 text-[#cccccc] hover:bg-[#3f3f46] transition-colors flex items-center justify-center"
+            >
+              <Minus size={14} />
+            </button>
+            <button
+              title="Maximize"
+              className="h-full px-3 text-[#cccccc] hover:bg-[#3f3f46] transition-colors flex items-center justify-center"
+            >
+              <Square size={12} />
+            </button>
+            <button
+              onClick={() => navigate('/learning')}
+              title="Tutup Window"
+              className="h-full px-3.5 text-[#cccccc] hover:bg-[#e81123] hover:text-white transition-colors flex items-center justify-center"
+            >
+              <X size={14} />
+            </button>
           </div>
         </div>
-      </Card>
 
-      {/* Main Grid: Sidebar TOC + Article Body */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sticky Sidebar Navigation */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-20 space-y-4">
-            <Card className="p-4 border-border/60 bg-bg-surface/80 backdrop-blur">
-              <h3 className="text-xs font-mono font-bold text-text-dim uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Layers size={14} className="text-accent" /> Daftar Isi Artikel
-              </h3>
-              <nav className="space-y-1">
-                {sections.map((sec) => (
-                  <button
-                    key={sec.id}
-                    onClick={() => scrollToSection(sec.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-xs font-mono transition-all flex items-center justify-between ${
-                      activeSection === sec.id
-                        ? 'bg-accent/15 text-accent font-bold border-l-2 border-accent'
-                        : 'text-text-muted hover:text-text-primary hover:bg-bg-elevated'
-                    }`}
-                  >
-                    <span className="truncate">{sec.label}</span>
-                    {activeSection === sec.id && <ChevronRight size={12} />}
-                  </button>
-                ))}
-              </nav>
-            </Card>
+        {/* ============================================================ */}
+        {/* 2. Windows 10 Ribbon / Toolbar Menu */}
+        {/* ============================================================ */}
+        <div className="bg-[#252526] border-b border-[#333333] px-3 py-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+          {/* File Menu Tabs */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => navigate('/learning')}
+              className="px-3 py-1 bg-[#0078d4] text-white font-semibold flex items-center gap-1.5 hover:bg-[#0063b1]"
+            >
+              <ArrowLeft size={12} /> Kurikulum
+            </button>
+            <button className="px-3 py-1 text-[#cccccc] hover:bg-[#333333]">Beranda</button>
+            <button className="px-3 py-1 text-[#cccccc] hover:bg-[#333333]">Tampilan</button>
+            <button className="px-3 py-1 text-[#cccccc] hover:bg-[#333333]">Referensi</button>
+          </div>
 
-            <Card className="p-4 bg-gradient-to-br from-accent/5 to-cyan-500/5 border-accent/20">
-              <h4 className="text-xs font-mono font-bold text-accent mb-1 flex items-center gap-1.5">
-                <Sparkles size={14} /> Tahukah Anda?
-              </h4>
-              <p className="text-[11px] text-text-muted leading-relaxed">
-                PLC pertama (Modicon 084) diciptakan tahun 1968 oleh Dick Morley hanya untuk menggantikan kabel ribuan relay pada pabrik otomotif Chevrolet.
+          {/* Quick Actions Strip */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setBookmarked(!bookmarked)}
+              className={`px-2.5 py-1 flex items-center gap-1 border text-xs transition-colors ${
+                bookmarked
+                  ? 'bg-[#0078d4] text-white border-[#005a9e]'
+                  : 'bg-[#333333] hover:bg-[#3e3e42] text-[#cccccc] border-[#474747]'
+              }`}
+            >
+              <Bookmark size={12} /> {bookmarked ? 'Tersimpan' : 'Bookmark'}
+            </button>
+            <button
+              onClick={handleCopyLink}
+              className="px-2.5 py-1 bg-[#333333] hover:bg-[#3e3e42] text-[#cccccc] border border-[#474747] flex items-center gap-1"
+            >
+              {copied ? <Check size={12} className="text-[#107c41]" /> : <Copy size={12} />}
+              {copied ? 'Tersalin' : 'Salin URL'}
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="px-2.5 py-1 bg-[#333333] hover:bg-[#3e3e42] text-[#cccccc] border border-[#474747] flex items-center gap-1"
+            >
+              <Printer size={12} /> Cetak
+            </button>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* 3. Main Body Split: Explorer Pane (Left) + Document Content (Right) */}
+        {/* ============================================================ */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[85vh]">
+          {/* Left Navigation Pane (Windows Explorer Tree Style) */}
+          <div className="lg:col-span-3 bg-[#1e1e1e] border-r border-[#333333] p-3 space-y-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#858585] uppercase tracking-wider px-2">
+              <Folder size={13} className="text-[#0078d4]" />
+              <span>Daftar Isi Bab</span>
+            </div>
+
+            <nav className="space-y-0.5 font-sans text-xs">
+              {sections.map((sec, idx) => (
+                <button
+                  key={sec.id}
+                  onClick={() => scrollToSection(sec.id)}
+                  className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between border border-transparent transition-colors ${
+                    activeSection === sec.id
+                      ? 'bg-[#0078d4] text-white font-medium border-[#005a9e]'
+                      : 'text-[#cccccc] hover:bg-[#2a2d2e]'
+                  }`}
+                >
+                  <span className="truncate">
+                    {idx + 1}. {sec.label.replace(/^\d+\.\s*/, '')}
+                  </span>
+                  {activeSection === sec.id && <ChevronRight size={12} />}
+                </button>
+              ))}
+            </nav>
+
+            {/* Windows 10 Info Tile */}
+            <div className="bg-[#252526] p-3 border border-[#333333] space-y-1.5 text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-[#0078d4]">
+                <Layers size={13} />
+                <span>Ringkasan Dokumen</span>
+              </div>
+              <div className="text-[11px] text-[#9d9d9d] space-y-1">
+                <p>• 11 Halaman Materi Resmi</p>
+                <p>• Standar IEC 61131-3</p>
+                <p>• 3 Kasus Smart Factory</p>
+                <p>• Estimasi Baca: 15 Menit</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Document Reading Pane */}
+          <div className="lg:col-span-9 bg-[#1e1e1e] p-6 lg:p-10 space-y-10 overflow-y-auto">
+            {/* Header Document Banner */}
+            <div className="bg-[#252526] border border-[#333333] p-6 border-l-4 border-l-[#0078d4]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-[#0078d4] text-white text-[10px] font-bold px-2 py-0.5 font-mono">
+                  MODUL WEBINAR
+                </span>
+                <span className="bg-[#333333] text-[#cccccc] text-[10px] font-bold px-2 py-0.5 font-mono">
+                  INDUSTRI 4.0
+                </span>
+              </div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-white leading-tight">
+                BASIC PLC: Fondasi Kontrol Otomasi untuk Mendukung Transformasi Industri 4.0
+              </h1>
+              <p className="text-xs lg:text-sm text-[#cccccc] mt-2 italic">
+                "Dari relay ke smart factory: memahami PLC sebagai jembatan antara mesin dan data."
               </p>
-            </Card>
-          </div>
-        </div>
+            </div>
 
-        {/* Main Article Content */}
-        <div className="lg:col-span-3 space-y-12">
-          {/* SECTION 1 */}
-          <section id="sec-1" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-6">
-              <div className="flex items-center gap-3">
-                <Badge variant="accent">Bagian 1</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  1. Pengantar — Kenapa PLC Masih Relevan di Era Industri 4.0
+            {/* SECTION 1 */}
+            <section id="sec-1" className="space-y-4">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">01</span>
+                <h2 className="text-lg font-bold text-white">
+                  Pengantar — Kenapa PLC Masih Relevan di Era Industri 4.0
                 </h2>
               </div>
 
-              <p className="text-text-primary/90 leading-relaxed">
-                Ketika orang mendengar istilah **"Industri 4.0"**, bayangan yang muncul biasanya adalah kecerdasan buatan (*artificial intelligence*), big data, atau robot yang bekerja otonom penuh. Tapi di balik semua istilah yang terdengar futuristik itu, ada satu komponen yang justru sudah eksis sejak akhir 1960-an dan sampai sekarang tetap jadi tulang punggung lantai produksi: **Programmable Logic Controller (PLC)**.
+              <p className="text-xs lg:text-sm text-[#cccccc] leading-relaxed">
+                Ketika orang mendengar istilah <strong>"Industri 4.0"</strong>, bayangan yang muncul biasanya adalah kecerdasan buatan (AI), big data, atau robot yang bekerja otonom penuh. Tapi di balik semua istilah yang terdengar futuristik itu, ada satu komponen yang justru sudah eksis sejak akhir 1960-an dan sampai sekarang tetap jadi tulang punggung lantai produksi: <strong>Programmable Logic Controller (PLC)</strong>.
               </p>
 
-              <p className="text-text-primary/90 leading-relaxed">
+              <p className="text-xs lg:text-sm text-[#cccccc] leading-relaxed">
                 PLC pertama kali dikembangkan sebagai pengganti sistem relay elektromekanis yang rumit dan mahal untuk diubah — dulu, kalau proses produksi berubah, teknisi harus mengganti pengkabelan fisik satu per satu. Dengan hadirnya download program dari komputer atau perangkat pemrograman, perubahan logika kontrol bisa dilakukan dalam hitungan detik tanpa membongkar panel.
               </p>
 
-              <p className="text-text-primary/90 leading-relaxed">
-                Yang menarik, alih-alih tergantikan oleh teknologi baru, PLC modern justru berevolusi menjadi jembatan penting yang menghubungkan lantai produksi (*shop floor*) dengan lapisan data dan analitik di atasnya. PLC generasi terbaru dari vendor-vendor besar kini mampu berinteraksi secara real-time dengan sensor IoT yang terhubung ke fasilitas, memungkinkan integrasi mulus antara analisis data dan peralatan otomatis.
-              </p>
-
-              {/* INTINYA Callout */}
-              <div className="bg-amber-500/10 border-l-4 border-amber-500 p-5 rounded-r-xl space-y-2 shadow-sm">
-                <div className="flex items-center gap-2 text-amber-400 font-mono font-bold text-sm">
-                  <Lightbulb size={18} /> INTINYA
-                </div>
-                <p className="text-amber-100/90 text-sm leading-relaxed">
+              {/* Windows 10 Callout Box */}
+              <div className="bg-[#1f2430] border-l-4 border-[#0078d4] p-4 text-xs space-y-1">
+                <p className="font-bold text-[#0078d4]">📌 INTINYA:</p>
+                <p className="text-[#cccccc] leading-relaxed">
                   PLC bukan teknologi lama yang akan digantikan Industri 4.0 — ia justru komponen yang memungkinkan Industri 4.0 terjadi di lapangan. Tanpa PLC yang bisa membaca sensor dan mengeksekusi logika secara deterministik dan real-time, seluruh lapisan analitik dan AI di atasnya tidak punya "tangan" untuk bertindak di dunia fisik.
                 </p>
               </div>
+            </section>
 
-              <p className="text-text-primary/90 leading-relaxed">
-                Webinar ini dirancang untuk peserta dari berbagai latar belakang di industri — baik yang benar-benar baru mengenal PLC, teknisi yang ingin memperbarui pemahaman, maupun profesional non-teknis yang perlu tahu *"apa yang sebenarnya terjadi"* di balik istilah otomasi pabrik. Kita akan mulai dari konsep dasar, masuk ke logika pemrograman sederhana, lalu menyambungkannya ke konteks besar Industri 4.0 lewat studi kasus nyata.
-              </p>
-            </Card>
-          </section>
-
-          {/* SECTION 2 */}
-          <section id="sec-2" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-6">
-              <div className="flex items-center gap-3">
-                <Badge variant="warning">Bagian 2</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  2. Tujuan Pembelajaran
-                </h2>
+            {/* SECTION 2 */}
+            <section id="sec-2" className="space-y-4">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">02</span>
+                <h2 className="text-lg font-bold text-white">Tujuan Pembelajaran</h2>
               </div>
 
-              <p className="text-text-muted text-sm">
-                Setelah membaca modul dan mengikuti materi ini, Anda diharapkan mampu:
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[
                   'Menjelaskan apa itu PLC, komponen utamanya, dan bagaimana ia bekerja secara siklik (scan cycle).',
                   'Membaca logika dasar ladder diagram — termasuk konsep kontak, coil, timer, dan counter — pada level pengantar.',
@@ -776,450 +717,210 @@ export default function ArticleWebinarPLC() {
                   'Mengidentifikasi bagaimana PLC mendukung inisiatif Industri 4.0 seperti predictive maintenance, efisiensi energi, dan smart factory.',
                   'Mengenali contoh penerapan nyata PLC di berbagai sektor industri sebagai bekal untuk eksplorasi lebih lanjut.'
                 ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-xl bg-bg-elevated/40 border border-white/5 flex items-start gap-3"
-                  >
-                    <CheckCircle2 className="text-accent shrink-0 mt-0.5" size={18} />
-                    <p className="text-xs text-text-primary font-medium leading-relaxed">
-                      {item}
-                    </p>
+                  <div key={idx} className="bg-[#252526] p-3 border border-[#333333] flex items-start gap-2.5">
+                    <span className="text-[#0078d4] font-bold text-xs">{idx + 1}.</span>
+                    <p className="text-xs text-[#cccccc] leading-relaxed">{item}</p>
                   </div>
                 ))}
               </div>
-            </Card>
-          </section>
+            </section>
 
-          {/* SECTION 3 */}
-          <section id="sec-3" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-8">
-              <div className="flex items-center gap-3">
-                <Badge variant="success">Bagian 3</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  3. Dasar-Dasar PLC
-                </h2>
+            {/* SECTION 3 */}
+            <section id="sec-3" className="space-y-6">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">03</span>
+                <h2 className="text-lg font-bold text-white">Dasar-Dasar PLC</h2>
               </div>
 
               {/* 3.1 Apa itu PLC */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  3.1 Apa itu PLC?
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Secara definisi teknis, **PLC adalah controller berbasis mikroprosesor** yang menggunakan *programmable memory* untuk menyimpan instruksi dan menjalankan fungsi logika, sequencing, timing, counting, dan aritmatika guna mengendalikan mesin dan proses — dirancang agar bisa dioperasikan oleh engineer yang mungkin tidak punya latar belakang komputer mendalam.
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-[#0078d4]">3.1 Apa itu PLC?</h3>
+                <p className="text-xs lg:text-sm text-[#cccccc] leading-relaxed">
+                  Secara definisi teknis, PLC adalah controller berbasis mikroprosesor yang menggunakan programmable memory untuk menyimpan instruksi dan menjalankan fungsi logika, sequencing, timing, counting, dan aritmatika guna mengendalikan mesin dan proses.
                 </p>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Dengan kata lain lebih sederhana: **PLC adalah "komputer versi tahan banting"** yang tugasnya cuma satu — membaca kondisi input (sensor, saklar, tombol), memprosesnya berdasarkan program yang sudah ditulis, lalu menyalakan atau mematikan output (motor, valve, lampu indikator, solenoid). Siklus ini berulang terus-menerus, biasanya dalam hitungan milidetik.
+                <p className="text-xs lg:text-sm text-[#cccccc] leading-relaxed">
+                  Dengan kata lain: <strong>PLC adalah "komputer versi tahan banting"</strong> yang bertugas membaca input (sensor), mengevaluasi program kontrol, lalu mengatur output (motor, solenoid valve, lampu).
                 </p>
 
-                {/* DEFINISI Callout */}
-                <div className="bg-cyan-500/10 border-l-4 border-cyan-400 p-5 rounded-r-xl space-y-2">
-                  <div className="flex items-center gap-2 text-cyan-300 font-mono font-bold text-sm">
-                    <ShieldCheck size={18} /> DEFINISI — PLC vs Komputer Biasa
-                  </div>
-                  <p className="text-cyan-100/90 text-sm leading-relaxed">
-                    Bedanya bukan di seberapa "pintar", tapi di **keandalan dan determinisme**. PLC dirancang untuk bertahan di lingkungan industri yang keras (getaran, suhu ekstrem, debu, noise listrik) dan menjamin waktu respons yang konsisten — sesuatu yang krusial ketika keterlambatan setengah detik bisa berarti produk cacat atau kondisi berbahaya.
+                <div className="bg-[#252526] border-l-4 border-[#ffb900] p-3 text-xs space-y-1">
+                  <p className="font-bold text-[#ffb900]">📖 DEFINISI — PLC vs Komputer Biasa:</p>
+                  <p className="text-[#cccccc] leading-relaxed">
+                    Bedanya bukan di seberapa "pintar", melainkan pada <strong>keandalan fisik dan determinisme</strong>. PLC dirancang bekerja non-stop 24/7 di area bersuhu ekstrem, debu tebal, getaran tinggi, dan gangguan noise listrik tanpa crash.
                   </p>
                 </div>
-
-                <p className="text-text-primary/90 leading-relaxed">
-                  Dari sisi praktik di lapangan, transisi dari sistem kontrol tradisional ke PLC sebenarnya cukup mulus secara konseptual: push button, limit switch, dan komponen command lain yang tadinya sudah ada tetap dipakai sebagai perangkat input ke PLC. Begitu juga kontaktor, relay, solenoid, dan lampu indikator tetap menjadi perangkat output yang dikendalikan PLC. Yang berubah bukan perangkat lapangannya, tapi **"otak" yang mengatur logikanya — dari pengkabelan fisik menjadi baris-baris program**.
-                </p>
               </div>
 
               {/* 3.2 Komponen Utama PLC */}
-              <div className="space-y-4 pt-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  3.2 Komponen Utama PLC
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Terlepas dari merek atau ukurannya, hampir semua PLC punya komponen fungsional yang sama:
-                </p>
-
-                <div className="overflow-x-auto rounded-xl border border-white/10">
-                  <table className="w-full text-sm text-left">
-                    <thead className="text-xs font-mono uppercase bg-bg-elevated text-accent">
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-[#0078d4]">3.2 Komponen Utama PLC</h3>
+                <div className="border border-[#333333] overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-[#2d2d2d] text-[#ffffff] font-bold">
                       <tr>
-                        <th className="px-6 py-3 border-b border-white/10">Komponen</th>
-                        <th className="px-6 py-3 border-b border-white/10">Fungsi Utama</th>
+                        <th className="p-2.5 border-b border-[#333333]">Komponen</th>
+                        <th className="p-2.5 border-b border-[#333333]">Fungsi Utama</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 text-xs">
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-text-primary">Power Supply (PSU)</td>
-                        <td className="px-6 py-3 text-text-muted">Mengonversi listrik AC dari sumber utama menjadi tegangan DC (umumnya 24V DC) yang dibutuhkan komponen internal PLC.</td>
+                    <tbody className="divide-y divide-[#333333] text-[#cccccc]">
+                      <tr className="bg-[#1e1e1e]">
+                        <td className="p-2.5 font-bold text-white">Power Supply (PSU)</td>
+                        <td className="p-2.5">Mengonversi listrik AC (220V) menjadi DC 24V untuk operasional komponen internal PLC.</td>
                       </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-text-primary">CPU (Central Processing Unit)</td>
-                        <td className="px-6 py-3 text-text-muted">"Otak" PLC — mengeksekusi program kontrol, memproses data input/output, dan mengelola seluruh operasi secara siklik.</td>
+                      <tr className="bg-[#252526]">
+                        <td className="p-2.5 font-bold text-white">CPU (Central Processing Unit)</td>
+                        <td className="p-2.5">"Otak" PLC — mengeksekusi program, memproses sinyal I/O, dan mengelola komunikasi.</td>
                       </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-text-primary">Memory</td>
-                        <td className="px-6 py-3 text-text-muted">Menyimpan program kontrol serta data operasional, baik yang volatile (RAM) maupun non-volatile (ROM/EEPROM).</td>
+                      <tr className="bg-[#1e1e1e]">
+                        <td className="p-2.5 font-bold text-white">Memory (RAM/ROM)</td>
+                        <td className="p-2.5">Menyimpan program logika kontrol dan tabel alamat variabel sistem.</td>
                       </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-text-primary">Modul Input/Output (I/O)</td>
-                        <td className="px-6 py-3 text-text-muted">Antarmuka fisik yang menghubungkan PLC dengan perangkat lapangan — modul input membaca sensor/saklar, modul output mengendalikan aktuator.</td>
+                      <tr className="bg-[#252526]">
+                        <td className="p-2.5 font-bold text-white">Modul Input/Output (I/O)</td>
+                        <td className="p-2.5">Antarmuka fisik untuk membaca sensor (Input) dan menyalakan aktuator/motor (Output).</td>
                       </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-text-primary">Communication Interface</td>
-                        <td className="px-6 py-3 text-text-muted">Memungkinkan PLC bertukar data dengan perangkat lain — HMI, PLC lain, SCADA, atau jaringan pabrik yang lebih luas.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-text-primary">Programming Device</td>
-                        <td className="px-6 py-3 text-text-muted">Komputer, laptop, atau perangkat genggam yang dipakai untuk menulis dan mengunggah program ke PLC.</td>
+                      <tr className="bg-[#1e1e1e]">
+                        <td className="p-2.5 font-bold text-white">Communication Interface</td>
+                        <td className="p-2.5">Port komunikasi jaringan (Ethernet, Profinet, Modbus) ke SCADA, HMI, atau Cloud.</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+              </div>
 
-                {/* TIPS PRAKTIS Callout */}
-                <div className="bg-emerald-500/10 border-l-4 border-emerald-400 p-5 rounded-r-xl space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-300 font-mono font-bold text-sm">
-                    <Sparkles size={18} /> TIPS PRAKTIS — Cara Cepat Kenali Komponen di Panel Nyata
-                  </div>
-                  <p className="text-emerald-100/90 text-sm leading-relaxed">
-                    Kalau Anda pertama kali membuka panel kontrol di lapangan, cari kotak dengan indikator LED berkedip (CPU), rel dengan banyak terminal berkabel (modul I/O), dan power supply biasanya ditandai warna terang dengan output 24V DC tertulis jelas di bodinya. HMI biasanya berupa layar sentuh terpisah yang dipasang di pintu panel atau di dekat operator.
+              {/* 3.3 Scan Cycle Diagnostics */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-[#0078d4]">3.3 Siklus Kerja (Scan Cycle)</h3>
+                <p className="text-xs text-[#cccccc]">
+                  Uji alur kerja siklis PLC secara interaktif pada simulator diagnostik berikut:
+                </p>
+                <ScanCycleWidgetWin10 />
+              </div>
+            </section>
+
+            {/* SECTION 4 */}
+            <section id="sec-4" className="space-y-6">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">04</span>
+                <h2 className="text-lg font-bold text-white">Logika Dasar: Ladder Diagram</h2>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-[#0078d4]">4.1 Kontak, Koil, dan Penguncian (Self-Holding)</h3>
+                <p className="text-xs lg:text-sm text-[#cccccc] leading-relaxed">
+                  Ladder Diagram meniru skema wiring listrik konvensional. Daya diasumsikan mengalir dari rel kiri (L+) menuju rel kanan (M) saat kondisi kontak terpenuhi.
+                </p>
+
+                {/* Ladder Diagram Simulator */}
+                <StartStopLadderWin10 />
+              </div>
+
+              {/* 4.2 Timer & Counter */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="bg-[#252526] p-4 border border-[#333333] space-y-1.5">
+                  <h4 className="text-xs font-bold text-white">Timer On-Delay (TON)</h4>
+                  <p className="text-xs text-[#cccccc] leading-relaxed">
+                    Menunda pengaktifan output selama durasi preset (misal 5 detik). Begitu waktu tercapai, kontak output timer menjadi TRUE hingga di-reset.
+                  </p>
+                </div>
+                <div className="bg-[#252526] p-4 border border-[#333333] space-y-1.5">
+                  <h4 className="text-xs font-bold text-white">Counter Up (CTU)</h4>
+                  <p className="text-xs text-[#cccccc] leading-relaxed">
+                    Menghitung jumlah pulsa benda yang lewat dari sensor. Saat akumulasi mencapai target (misal 12 pcs), output counter aktif memicu batch pengemasan.
                   </p>
                 </div>
               </div>
+            </section>
 
-              {/* 3.3 Siklus Kerja (Scan Cycle) */}
-              <div className="space-y-4 pt-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  3.3 Siklus Kerja (Scan Cycle)
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  PLC bekerja secara siklik, bukan sekali jalan. Satu putaran siklus ini disebut **scan cycle**, dan secara garis besar terdiri dari tiga tahap yang berulang terus: membaca seluruh status input, mengeksekusi logika program dari atas ke bawah, lalu memperbarui seluruh status output. Setelah itu siklus kembali ke awal — dan ini terjadi berulang kali dalam hitungan milidetik (1 hingga 20 ms).
-                </p>
+            {/* SECTION 5 */}
+            <section id="sec-5" className="space-y-4">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">05</span>
+                <h2 className="text-lg font-bold text-white">PLC sebagai Pilar Industri 4.0</h2>
+              </div>
 
-                {/* Scan Cycle Widget */}
-                <ScanCycleWidget />
+              <p className="text-xs lg:text-sm text-[#cccccc] leading-relaxed">
+                Di era smart manufacturing, PLC berevolusi dari sekadar pengontrol saklar lokal menjadi <strong>Edge Gateway</strong> yang mengalirkan data operasional mesin ke lapisan SCADA, MES, dan analitik Cloud/AI.
+              </p>
 
-                {/* ANALOGI Callout */}
-                <div className="bg-purple-500/10 border-l-4 border-purple-400 p-5 rounded-r-xl space-y-2">
-                  <div className="flex items-center gap-2 text-purple-300 font-mono font-bold text-sm">
-                    <Workflow size={18} /> ANALOGI SEDERHANA — Mandor Pabrik
-                  </div>
-                  <p className="text-purple-100/90 text-sm leading-relaxed">
-                    Bayangkan scan cycle seperti seorang mandor yang berjalan mengelilingi pabrik setiap beberapa milidetik: ia mengecek semua sensor sekali (baca input), memutuskan tindakan berdasarkan aturan yang ia hafal (eksekusi logika), lalu memberi perintah ke semua mesin sekaligus (tulis output) — baru kemudian mulai putaran berikutnya dari awal.
-                  </p>
+              <div className="border border-[#333333] overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-[#2d2d2d] text-white font-bold">
+                    <tr>
+                      <th className="p-2.5 border-b border-[#333333]">Lapisan Otomasi</th>
+                      <th className="p-2.5 border-b border-[#333333]">Peran Utama</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#333333] text-[#cccccc]">
+                    <tr className="bg-[#1e1e1e]">
+                      <td className="p-2.5 font-bold text-[#0078d4]">1. PLC (Machine Level)</td>
+                      <td className="p-2.5">Eksekusi deterministik real-time di lantai pabrik (&lt;10 ms).</td>
+                    </tr>
+                    <tr className="bg-[#252526]">
+                      <td className="p-2.5 font-bold text-[#ffb900]">2. SCADA (Supervisory Level)</td>
+                      <td className="p-2.5">Supervisi visual multi-mesin, logging alarm, dan intervensi operator.</td>
+                    </tr>
+                    <tr className="bg-[#1e1e1e]">
+                      <td className="p-2.5 font-bold text-[#107c41]">3. IIoT / Cloud Analytics</td>
+                      <td className="p-2.5">Model machine learning untuk predictive maintenance dan efisiensi energi.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* SECTION 6: Windows 10 Live Tiles Case Studies */}
+            <section id="sec-6" className="space-y-4">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">06</span>
+                <h2 className="text-lg font-bold text-white">Studi Kasus Industri Nyata</h2>
+              </div>
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="bg-[#0078d4] p-4 text-white shadow-md">
+                  <p className="text-[11px] font-semibold opacity-90 uppercase">Konsumsi Energi</p>
+                  <p className="text-3xl font-bold font-mono mt-1">-28%</p>
+                  <p className="text-[10px] mt-2 opacity-80">Pabrik Otomotif (12 Bulan)</p>
+                </div>
+                <div className="bg-[#ffb900] p-4 text-black shadow-md">
+                  <p className="text-[11px] font-semibold opacity-90 uppercase">Peak Demand Listrik</p>
+                  <p className="text-3xl font-bold font-mono mt-1">-28%</p>
+                  <p className="text-[10px] mt-2 opacity-80">Integrasi S7-1500 + WinCC</p>
+                </div>
+                <div className="bg-[#107c41] p-4 text-white shadow-md">
+                  <p className="text-[11px] font-semibold opacity-90 uppercase">Jejak Karbon</p>
+                  <p className="text-3xl font-bold font-mono mt-1">-35.1%</p>
+                  <p className="text-[10px] mt-2 opacity-80">8.760 Titik Data / Jam</p>
+                </div>
+                <div className="bg-[#005a9e] p-4 text-white shadow-md">
+                  <p className="text-[11px] font-semibold opacity-90 uppercase">Downtime Mesin</p>
+                  <p className="text-3xl font-bold font-mono mt-1">-32%</p>
+                  <p className="text-[10px] mt-2 opacity-80">Predictive Maintenance</p>
                 </div>
               </div>
+            </section>
 
-              {/* 3.4 Bahasa Pemrograman PLC */}
-              <div className="space-y-4 pt-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  3.4 Bahasa Pemrograman PLC (Standard IEC 61131-3)
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Standar internasional **IEC 61131-3** mendefinisikan beberapa bahasa pemrograman PLC yang diakui industri:
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-bg-elevated border border-accent/30">
-                    <h5 className="font-mono font-bold text-accent mb-1">Ladder Diagram (LD)</h5>
-                    <p className="text-xs text-text-muted leading-relaxed">
-                      Representasi grafis yang meniru diagram relay elektrik, paling intuitif bagi orang dengan latar belakang kelistrikan.
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-bg-elevated border border-white/10">
-                    <h5 className="font-mono font-bold text-text-primary mb-1">Structured Text (ST)</h5>
-                    <p className="text-xs text-text-muted leading-relaxed">
-                      Bahasa tingkat tinggi mirip Pascal/C, sangat cocok untuk algoritma matematika kompleks dan manipulasi data.
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-bg-elevated border border-white/10">
-                    <h5 className="font-mono font-bold text-text-primary mb-1">Function Block Diagram (FBD)</h5>
-                    <p className="text-xs text-text-muted leading-relaxed">
-                      Pemrograman berbasis blok fungsi yang saling terhubung, sangat populer untuk industri proses kontinu.
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-bg-elevated border border-white/10">
-                    <h5 className="font-mono font-bold text-text-primary mb-1">Sequential Function Chart (SFC)</h5>
-                    <p className="text-xs text-text-muted leading-relaxed">
-                      Digunakan untuk memodelkan proses berurutan bertahap (*state-based process/batch*).
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </section>
-
-          {/* SECTION 4 */}
-          <section id="sec-4" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-8">
-              <div className="flex items-center gap-3">
-                <Badge variant="accent">Bagian 4</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  4. Logika Dasar: Ladder Diagram
-                </h2>
+            {/* SECTION 7 */}
+            <section id="sec-7" className="space-y-4">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">07</span>
+                <h2 className="text-lg font-bold text-white">Rangkuman & Key Takeaways</h2>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  4.1 Kontak, Coil, dan Rung
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Ladder diagram (ladder logic) adalah bahasa pemrograman grafis yang dibangun dari kontak, coil, dan fungsi lain yang disusun dalam baris-baris yang disebut **rung** — istilah ini diambil dari analogi "anak tangga" pada gambar tangga (ladder).
-                </p>
+              <div className="bg-[#252526] p-4 border border-[#333333] space-y-2 text-xs text-[#cccccc]">
+                <p>• PLC adalah mikrokontroler industri tangguh berbasis siklus kerja siklis (Scan Cycle).</p>
+                <p>• Ladder Diagram tetap menjadi bahasa pemrograman paling umum karena kemudahan visualnya.</p>
+                <p>• Integrasi PLC + SCADA + IIoT adalah tulang punggung dari Smart Factory Industri 4.0.</p>
+              </div>
+            </section>
 
-                {/* Symbols Table */}
-                <div className="overflow-x-auto rounded-xl border border-white/10">
-                  <table className="w-full text-sm text-left">
-                    <thead className="text-xs font-mono uppercase bg-bg-elevated text-accent">
-                      <tr>
-                        <th className="px-4 py-3 border-b border-white/10">Simbol</th>
-                        <th className="px-4 py-3 border-b border-white/10">Arti / Nama</th>
-                        <th className="px-4 py-3 border-b border-white/10">Analogi Fisik</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5 text-xs font-mono">
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-accent font-bold">—| |—</td>
-                        <td className="px-4 py-3 text-text-primary">Normally Open (NO) contact</td>
-                        <td className="px-4 py-3 text-text-muted">Kondisi TRUE saat input aktif, seperti saklar yang tertutup ketika ditekan.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-accent font-bold">—|/|—</td>
-                        <td className="px-4 py-3 text-text-primary">Normally Closed (NC) contact</td>
-                        <td className="px-4 py-3 text-text-muted">Kondisi TRUE saat input tidak aktif, seperti saklar emergency stop.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-accent font-bold">—( )—</td>
-                        <td className="px-4 py-3 text-text-primary">Coil (output)</td>
-                        <td className="px-4 py-3 text-text-muted">Mewakili output yang diaktifkan — motor, lampu, solenoid.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-accent font-bold">—[TON]—</td>
-                        <td className="px-4 py-3 text-text-primary">Timer On-Delay</td>
-                        <td className="px-4 py-3 text-text-muted">Menunda aktivasi output selama waktu tertentu setelah kondisi terpenuhi.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-accent font-bold">—[CTU]—</td>
-                        <td className="px-4 py-3 text-text-primary">Counter Up</td>
-                        <td className="px-4 py-3 text-text-muted">Menambah nilai hitungan setiap kali menerima transisi sinyal (rising edge).</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Ladder Circuit Widget */}
-                <StartStopLadderWidget />
+            {/* SECTION 8 */}
+            <section id="sec-8" className="space-y-4">
+              <div className="border-b border-[#333333] pb-2 flex items-center gap-2">
+                <span className="bg-[#0078d4] text-white px-2 py-0.5 text-xs font-bold font-mono">08</span>
+                <h2 className="text-lg font-bold text-white">Daftar Pustaka & Referensi</h2>
               </div>
 
-              {/* 4.2 Timer dan Counter */}
-              <div className="space-y-4 pt-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  4.2 Timer dan Counter
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Dua instruksi yang paling sering dipakai setelah kontak dan coil dasar adalah **timer** dan **counter** — keduanya krusial untuk proses yang melibatkan aspek waktu atau jumlah.
-                </p>
-
-                <div className="p-4 rounded-xl bg-bg-elevated border border-white/10 space-y-2">
-                  <h4 className="font-mono font-bold text-text-primary">Timer On-Delay (TON)</h4>
-                  <p className="text-xs text-text-muted leading-relaxed">
-                    Timer On-Delay (TON) adalah jenis timer paling umum: begitu kondisi input terpenuhi, timer mulai menghitung mundur dari nol menuju nilai preset (misalnya 5 detik), dan output timer baru aktif setelah waktu preset tercapai. Kontak timer akan tetap TRUE sampai timer di-reset secara eksplisit.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-bg-elevated border border-white/10 space-y-2">
-                  <h4 className="font-mono font-bold text-text-primary">Counter Up (CTU)</h4>
-                  <p className="text-xs text-text-muted leading-relaxed">
-                    Counter Up (CTU) menambah nilai akumulasi setiap kali menerima transisi sinyal dari OFF ke ON (*rising edge*). Ketika nilai akumulasi mencapai preset (misal 12 barang), output counter aktif untuk membuka pintu sortir atau menyalakan alarm batch.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </section>
-
-          {/* SECTION 5 */}
-          <section id="sec-5" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-8">
-              <div className="flex items-center gap-3">
-                <Badge variant="warning">Bagian 5</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  5. PLC sebagai Pilar Industri 4.0
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  5.1 Dari Kontrol Lokal ke Sistem Terhubung
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Industri 4.0 ditandai oleh otomasi tingkat lanjut, sistem yang saling terhubung, dan pengambilan keputusan berbasis data. Salah satu contoh sentral adalah **sistem Machine Vision + PLC** untuk inspeksi kualitas real-time di lini manufaktur.
-                </p>
-
-                {/* SMART FACTORY Callout */}
-                <div className="bg-blue-500/10 border-l-4 border-blue-400 p-5 rounded-r-xl space-y-2">
-                  <div className="flex items-center gap-2 text-blue-300 font-mono font-bold text-sm">
-                    <Server size={18} /> DEFINISI — Smart Factory
-                  </div>
-                  <p className="text-blue-100/90 text-sm leading-relaxed">
-                    Fasilitas manufaktur otomatis yang menggunakan perangkat-perangkat terhubung untuk mengumpulkan, membagikan, dan menganalisis data secara digital dan real-time — data *actionable* ini lantas dipakai untuk mengambil keputusan terkait produksi, jadwal predictive maintenance, kontrol kualitas, dan optimasi proses.
-                  </p>
-                </div>
-              </div>
-
-              {/* 5.2 Hierarchy Pyramid */}
-              <div className="space-y-4 pt-4">
-                <h3 className="text-xl font-mono font-bold text-accent border-b border-white/10 pb-2">
-                  5.2 PLC, SCADA, dan IIoT
-                </h3>
-                <p className="text-text-primary/90 leading-relaxed">
-                  Dalam arsitektur otomasi modern, PLC jarang berdiri sendiri. Ia menjadi bagian dari hierarki yang lebih besar bersama SCADA dan IIoT:
-                </p>
-
-                <div className="overflow-x-auto rounded-xl border border-white/10">
-                  <table className="w-full text-sm text-left">
-                    <thead className="text-xs font-mono uppercase bg-bg-elevated text-accent">
-                      <tr>
-                        <th className="px-6 py-3 border-b border-white/10">Lapisan</th>
-                        <th className="px-6 py-3 border-b border-white/10">Peran Utama</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5 text-xs">
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-accent">PLC (Machine Level)</td>
-                        <td className="px-6 py-3 text-text-muted">Eksekusi kontrol real-time di level mesin — deterministik, cepat, dan andal untuk logika langsung dengan aktuator/sensor.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-cyan-400">SCADA (Supervisory Level)</td>
-                        <td className="px-6 py-3 text-text-muted">Supervisi dan visualisasi data dari banyak PLC/RTU sekaligus, memungkinkan operator memantau dari ruang kontrol terpusat.</td>
-                      </tr>
-                      <tr className="hover:bg-white/[0.02]">
-                        <td className="px-6 py-3 font-mono font-bold text-emerald-400">IIoT / Cloud Level</td>
-                        <td className="px-6 py-3 text-text-muted">Pengumpulan data skala besar, analitik lanjutan, machine learning, dan dashboard untuk pengambilan keputusan strategis lintas pabrik.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* CATATAN REALISTIS Callout */}
-                <div className="bg-red-500/10 border-l-4 border-red-400 p-5 rounded-r-xl space-y-2">
-                  <div className="flex items-center gap-2 text-red-300 font-mono font-bold text-sm">
-                    <AlertTriangle size={18} /> CATATAN REALISTIS
-                  </div>
-                  <p className="text-red-100/90 text-sm leading-relaxed">
-                    Meski PLC berperan vital dalam kontrol, sifatnya yang cenderung statis dalam prosedur dinamis kadang jadi tantangan — Industri 4.0 menuntut alur kerja yang lebih *context-aware* dan responsif terhadap informasi sensor secara adaptif, bukan sekadar menjalankan logika tetap. Ini alasan integrasi PLC dengan lapisan analitik/AI menjadi fokus riset modern.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </section>
-
-          {/* SECTION 6 */}
-          <section id="sec-6" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-8">
-              <div className="flex items-center gap-3">
-                <Badge variant="success">Bagian 6</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  6. Studi Kasus Aplikatif
-                </h2>
-              </div>
-
-              {/* Case Study 1 */}
-              <div className="p-5 rounded-xl bg-bg-elevated/40 border border-white/5 space-y-2">
-                <h3 className="font-mono font-bold text-text-primary text-base">
-                  Studi Kasus 1 — Inspeksi Kualitas Otomatis (Machine Vision + PLC)
-                </h3>
-                <p className="text-xs text-text-muted leading-relaxed">
-                  Kamera vision (Cognex / SICK) diintegrasikan dengan PLC (Allen-Bradley / Siemens) untuk sistem kontrol closed-loop. Saat kamera mendeteksi produk cacat, PLC secara deterministik menyinkronkan penyortiran fisik ke jalur reject dalam waktu hitungan milidetik.
-                </p>
-              </div>
-
-              {/* Case Study 2 with Key Stats */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 via-bg-elevated to-bg-surface border border-amber-500/30 space-y-4">
-                <h3 className="font-mono font-bold text-amber-300 text-lg">
-                  Studi Kasus 2 — Smart Energy Management di Pabrik Otomotif
-                </h3>
-                <p className="text-xs text-text-muted leading-relaxed">
-                  Fasilitas manufaktur komponen otomotif menerapkan sistem terintegrasi PLC Siemens S7-1500 + SCADA WinCC selama 12 bulan. Data meter energi dianalisis dari 8.760 titik data per jam dengan algoritma optimasi Structured Text.
-                </p>
-
-                {/* Key Metrics Dashboard Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
-                  <div className="p-4 rounded-xl bg-black/40 border border-amber-500/30 text-center">
-                    <p className="text-[10px] font-mono text-text-dim uppercase font-bold">Konsumsi Energi</p>
-                    <p className="text-2xl font-mono font-black text-amber-400 mt-1">-28%</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-amber-500/30 text-center">
-                    <p className="text-[10px] font-mono text-text-dim uppercase font-bold">Peak Demand</p>
-                    <p className="text-2xl font-mono font-black text-amber-400 mt-1">-28%</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-emerald-500/30 text-center">
-                    <p className="text-[10px] font-mono text-text-dim uppercase font-bold">Jejak Karbon</p>
-                    <p className="text-2xl font-mono font-black text-emerald-400 mt-1">-35.1%</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-cyan-500/30 text-center">
-                    <p className="text-[10px] font-mono text-text-dim uppercase font-bold">Efisiensi Alat (OEE)</p>
-                    <p className="text-2xl font-mono font-black text-cyan-400 mt-1">+24.1%</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Case Study 3 */}
-              <div className="p-5 rounded-xl bg-bg-elevated/40 border border-white/5 space-y-2">
-                <h3 className="font-mono font-bold text-text-primary text-base">
-                  Studi Kasus 3 — Predictive Maintenance Berbasis Data Multi-Pabrik
-                </h3>
-                <p className="text-xs text-text-muted leading-relaxed">
-                  Manufaktur global melatih model machine learning dengan 5 tahun riwayat kegagalan mesin untuk 200+ aset produksi. Hasilnya: **penurunan downtime tak terjadwal sebesar 32%** dan menghemat **lebih dari 200 jam produksi per tahun**.
-                </p>
-              </div>
-            </Card>
-          </section>
-
-          {/* SECTION 7 */}
-          <section id="sec-7" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-6">
-              <div className="flex items-center gap-3">
-                <Badge variant="accent">Bagian 7</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary">
-                  7. Rangkuman dan Key Takeaways
-                </h2>
-              </div>
-
-              <ul className="space-y-3">
-                {[
-                  'PLC adalah controller berbasis mikroprosesor yang membaca input, mengeksekusi logika program, dan mengendalikan output secara siklik (scan cycle) — dirancang untuk keandalan di lingkungan keras.',
-                  'Komponen inti PLC meliputi power supply, CPU, memory, modul I/O, communication interface, dan programming device — dengan HMI sebagai pendamping visual.',
-                  'Ladder Diagram tetap jadi bahasa pemrograman paling populer untuk pemula karena kemiripannya dengan logika relay tradisional.',
-                  'PLC modern bukan sekadar pengganti relay — ia adalah jembatan real-time antara lantai produksi dan lapisan data/analitik Industri 4.0.',
-                  'Integrasi PLC dengan SCADA dan IIoT memungkinkan pergeseran dari maintenance reaktif ke predictive maintenance serta efisiensi energi terukur.'
-                ].map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-xs text-text-primary/90 leading-relaxed">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* LANGKAH SELANJUTNYA Callout */}
-              <div className="bg-cyan-500/10 border border-cyan-500/30 p-5 rounded-xl space-y-2">
-                <h4 className="font-mono font-bold text-cyan-300 text-sm flex items-center gap-2">
-                  <TrendingUp size={16} /> LANGKAH SELANJUTNYA
-                </h4>
-                <p className="text-xs text-text-muted leading-relaxed">
-                  Bagi Anda yang ingin memperdalam, langkah alami berikutnya adalah mencoba software simulasi ladder logic online untuk mempraktikkan rangkaian start-stop, timer, dan counter sendiri — sebelum melangkah ke platform PLC nyata seperti Siemens TIA Portal atau Allen-Bradley RSLogix/Studio 5000.
-                </p>
-              </div>
-            </Card>
-          </section>
-
-          {/* SECTION 8 */}
-          <section id="sec-8" className="scroll-mt-24">
-            <Card className="p-8 lg:p-10 border-white/5 space-y-6">
-              <div className="flex items-center gap-3">
-                <Badge variant="warning">Bagian 8</Badge>
-                <h2 className="text-2xl font-mono font-bold text-text-primary flex items-center gap-2">
-                  <FileText size={20} /> 8. Daftar Pustaka & Referensi
-                </h2>
-              </div>
-
-              <div className="space-y-3 text-xs font-mono text-text-muted divide-y divide-white/5">
+              <div className="space-y-2 text-xs divide-y divide-[#333333]">
                 {[
                   {
                     title: 'Blog Crouzet. (2026). Programmable Logic Controller (PLC): Definition and Basics.',
@@ -1272,26 +973,43 @@ export default function ArticleWebinarPLC() {
                     url: 'https://www.sciencedirect.com/topics/computer-science/programmable-logic-controller'
                   }
                 ].map((item, idx) => (
-                  <div key={idx} className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-start gap-2.5">
-                      <span className="text-text-dim shrink-0">{idx + 1}.</span>
-                      <span className="text-text-primary/90 leading-relaxed">{item.title}</span>
+                  <div key={idx} className="pt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-start gap-2">
+                      <span className="text-[#858585] font-mono">{idx + 1}.</span>
+                      <span className="text-[#cccccc] leading-relaxed">{item.title}</span>
                     </div>
                     {item.url && (
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-accent hover:underline flex items-center gap-1 shrink-0 ml-5 sm:ml-0"
+                        className="text-[#0078d4] hover:underline flex items-center gap-1 shrink-0 ml-5 sm:ml-0 font-medium"
                       >
-                        Buka Link <ExternalLink size={12} />
+                        Buka Link <ExternalLink size={11} />
                       </a>
                     )}
                   </div>
                 ))}
               </div>
-            </Card>
-          </section>
+            </section>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* 4. Windows 10 Status Bar */}
+        {/* ============================================================ */}
+        <div className="bg-[#0078d4] text-white px-3 py-1 text-[11px] font-sans flex items-center justify-between select-none">
+          <div className="flex items-center gap-3">
+            <span>READY</span>
+            <span>|</span>
+            <span>Dokumen: Modul Webinar PLC</span>
+            <span>|</span>
+            <span>8 Bab Selesai Dimuat</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1"><ZoomOut size={11} /> 100% <ZoomIn size={11} /></span>
+            <span>Windows 10 Fluent Reader</span>
+          </div>
         </div>
       </div>
     </div>
