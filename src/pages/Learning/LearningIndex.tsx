@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { LEARNING_LEVELS } from '@/constants/learningModules';
 import { useProgress } from '@/hooks/useProgress';
 import { Card, Badge } from '@/components/ui';
-import { BookOpen, CheckCircle2, Clock, ArrowRight, FileText, Sparkles, Cpu } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, ArrowRight, Sparkles, Cpu } from 'lucide-react';
 
 export default function LearningIndex() {
   const navigate = useNavigate();
@@ -43,10 +43,10 @@ export default function LearningIndex() {
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
-              <Badge variant="cyan" className="flex items-center gap-1">
+              <Badge variant="accent" className="flex items-center gap-1">
                 <Sparkles size={10} /> Artikel Terbaru
               </Badge>
-              <Badge variant="amber">Modul Webinar</Badge>
+              <Badge variant="warning">Modul Webinar</Badge>
               <span className="text-text-dim font-mono text-xs flex items-center gap-1">
                 <Clock size={12} /> 15 min. read
               </span>

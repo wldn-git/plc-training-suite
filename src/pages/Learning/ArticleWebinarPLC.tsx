@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Badge, Button } from '@/components/ui';
 import {
   ArrowLeft,
-  BookOpen,
   Clock,
   Share2,
   CheckCircle2,
@@ -22,11 +21,9 @@ import {
   RotateCcw,
   Sparkles,
   ChevronRight,
-  BarChart3,
   Server,
   Workflow
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 // ============================================================
 // Interactive Component 1: Scan Cycle Visualizer
@@ -431,9 +428,9 @@ export default function ArticleWebinarPLC() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Badge variant="cyan">Modul Webinar Eksklusif</Badge>
-            <Badge variant="amber">Industri 4.0</Badge>
-            <Badge variant="green">Dasar PLC</Badge>
+            <Badge variant="accent">Modul Webinar Eksklusif</Badge>
+            <Badge variant="warning">Industri 4.0</Badge>
+            <Badge variant="success">Dasar PLC</Badge>
             <span className="text-text-dim font-mono text-xs flex items-center gap-1 ml-auto">
               <Clock size={12} /> 15 min. read
             </span>
@@ -517,7 +514,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-1" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-6">
               <div className="flex items-center gap-3">
-                <Badge variant="cyan">Bagian 1</Badge>
+                <Badge variant="accent">Bagian 1</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   1. Pengantar — Kenapa PLC Masih Relevan di Era Industri 4.0
                 </h2>
@@ -555,7 +552,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-2" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-6">
               <div className="flex items-center gap-3">
-                <Badge variant="amber">Bagian 2</Badge>
+                <Badge variant="warning">Bagian 2</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   2. Tujuan Pembelajaran
                 </h2>
@@ -591,7 +588,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-3" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-8">
               <div className="flex items-center gap-3">
-                <Badge variant="green">Bagian 3</Badge>
+                <Badge variant="success">Bagian 3</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   3. Dasar-Dasar PLC
                 </h2>
@@ -747,7 +744,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-4" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-8">
               <div className="flex items-center gap-3">
-                <Badge variant="cyan">Bagian 4</Badge>
+                <Badge variant="accent">Bagian 4</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   4. Logika Dasar: Ladder Diagram
                 </h2>
@@ -835,7 +832,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-5" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-8">
               <div className="flex items-center gap-3">
-                <Badge variant="amber">Bagian 5</Badge>
+                <Badge variant="warning">Bagian 5</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   5. PLC sebagai Pilar Industri 4.0
                 </h2>
@@ -911,7 +908,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-6" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-8">
               <div className="flex items-center gap-3">
-                <Badge variant="green">Bagian 6</Badge>
+                <Badge variant="success">Bagian 6</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   6. Studi Kasus Aplikatif
                 </h2>
@@ -963,7 +960,7 @@ export default function ArticleWebinarPLC() {
                   Studi Kasus 3 — Predictive Maintenance Berbasis Data Multi-Pabrik
                 </h3>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Manufaktur global melatih model machine learning dengan 5 tahun riwayat kegagalan mesin untuk 200+ aset produksi. Hasilnya: **penurunan downtime tak terjadwal sebesar 32%** dan menghemat **>200 jam produksi per tahun**.
+                  Manufaktur global melatih model machine learning dengan 5 tahun riwayat kegagalan mesin untuk 200+ aset produksi. Hasilnya: **penurunan downtime tak terjadwal sebesar 32%** dan menghemat **lebih dari 200 jam produksi per tahun**.
                 </p>
               </div>
             </Card>
@@ -973,7 +970,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-7" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-6">
               <div className="flex items-center gap-3">
-                <Badge variant="cyan">Bagian 7</Badge>
+                <Badge variant="accent">Bagian 7</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary">
                   7. Rangkuman dan Key Takeaways
                 </h2>
@@ -1010,7 +1007,7 @@ export default function ArticleWebinarPLC() {
           <section id="sec-8" className="scroll-mt-24">
             <Card className="p-8 lg:p-10 border-white/5 space-y-6">
               <div className="flex items-center gap-3">
-                <Badge variant="amber">Bagian 8</Badge>
+                <Badge variant="warning">Bagian 8</Badge>
                 <h2 className="text-2xl font-mono font-bold text-text-primary flex items-center gap-2">
                   <FileText size={20} /> 8. Daftar Pustaka & Referensi
                 </h2>
