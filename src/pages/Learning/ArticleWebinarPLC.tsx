@@ -136,14 +136,14 @@ function SensorIcon(props: any) {
 }
 
 // ============================================================
-// Interactive Component 2: Start-Stop Ladder Diagram Simulator
+// Interactive Component 2: Start-Stop Ladder Diagram Simulator (SVG Edition)
 // ============================================================
 const StartStopLadderWidget = () => {
   const [startPressed, setStartPressed] = useState(false);
   const [stopPressed, setStopPressed] = useState(false);
   const [motorOn, setMotorOn] = useState(false);
 
-  // Logic: Motor ON if (Start OR MotorOn) AND NOT Stop
+  // Electrical logic
   const isPowerFlowing = (startPressed || motorOn) && !stopPressed;
 
   useEffect(() => {
@@ -154,15 +154,55 @@ const StartStopLadderWidget = () => {
     }
   }, [startPressed, stopPressed, isPowerFlowing]);
 
+  // Wire segments status
+  const wireStartHot = true; // left rail to start contact branch
+  const wireTopStartOutHot = startPressed;
+  const wireBottomLatchOutHot = motorOn;
+  const wireAfterParallelHot = startPressed || motorOn;
+  const wireAfterStopHot = wireAfterParallelHot && !stopPressed;
+  const wireCoilHot = wireAfterStopHot;
+
+  // Real-time Explanation text
+  let statusExplanation = {
+    title: 'Standby / Motor Berhenti',
+    badge: 'OFF',
+    badgeColor: 'bg-gray-800 text-gray-400 border-gray-700',
+    desc: 'Daya dari rel kiri tertahan di kontak Start (I0.0) dan Kontak Latch (Q0.0) karena keduanya masih terbuka (FALSE). Tekan tombol START di bawah untuk menyalakan motor.'
+  };
+
+  if (stopPressed) {
+    statusExplanation = {
+      title: 'Tombol STOP Ditekan (Sirkuit Terputus)',
+      badge: 'STOPPED',
+      badgeColor: 'bg-red-500/20 text-red-400 border-red-500/40',
+      desc: 'Kontak NC Stop (I0.1) terbuka memutus seluruh aliran daya ke Koil Motor (Q0.0). Motor langsung berhenti dan kontak pengunci (latch) terlepas.'
+    };
+  } else if (startPressed) {
+    statusExplanation = {
+      title: 'Tombol START Ditekan (Pemicu Awal)',
+      badge: 'START PULSE',
+      badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
+      desc: 'Kontak Start (I0.0) menutup (TRUE). Arus daya mengalir melalui Start -> Stop (I0.1) -> mengaktifkan Koil Motor (Q0.0). Kontak sekunder Q0.0 di cabang bawah otomatis ikut menutup!'
+    };
+  } else if (motorOn) {
+    statusExplanation = {
+      title: 'Motor Berjalan via Self-Holding (Terkunci)',
+      badge: 'LATCHED (ON)',
+      badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40',
+      desc: 'Tombol Start sudah dilepas (terbuka), TETAPI daya tetap mengalir lewat cabang bawah (Kontak Latch Q0.0). Inilah prinsip dasar Self-Holding (Seal-In Circuit) di industri!'
+    };
+  }
+
   return (
-    <div className="my-8 p-6 rounded-2xl bg-bg-surface border border-emerald-500/20 shadow-xl">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
+    <div className="my-8 p-6 rounded-2xl bg-[#0b0f19] border border-accent/20 shadow-2xl overflow-hidden">
+      {/* Header & Reset */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-4 border-b border-white/10">
         <div>
-          <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider">
-            <Sparkles size={16} /> Interactive Circuit
+          <div className="flex items-center gap-2 text-accent text-xs font-mono font-bold uppercase tracking-wider">
+            <Sparkles size={16} /> Skema Ladder Diagram Interaktif (IEC 61131-3)
           </div>
-          <h4 className="text-lg font-mono font-bold text-text-primary mt-1">
-            Simulasi Ladder Diagram: Start-Stop Motor Latch
+          <h4 className="text-lg font-mono font-bold text-text-primary mt-0.5">
+            Rangkaian Start-Stop dengan Self-Holding (Seal-In)
           </h4>
         </div>
         <Button
@@ -175,28 +215,297 @@ const StartStopLadderWidget = () => {
           }}
           leftIcon={<RotateCcw size={14} />}
         >
-          Reset Rangkaian
+          Reset Simulasi
         </Button>
       </div>
 
-      <p className="text-xs text-text-muted mb-6">
-        Coba tekan tombol **START (NO)** lalu lepas. Perhatikan bagaimana kontak sekunder `Motor_M1` mengunci (self-hold) daya sehingga motor tetap berjalan hingga tombol **STOP (NC)** ditekan.
-      </p>
+      {/* SVG Ladder Diagram Canvas */}
+      <div className="w-full overflow-x-auto bg-[#070a11] rounded-xl border border-white/10 p-2 sm:p-4 my-4">
+        <svg
+          viewBox="0 0 760 210"
+          className="w-full min-w-[680px] h-auto select-none"
+          style={{ fontFamily: 'monospace' }}
+        >
+          {/* CSS Definition for Flow Animation */}
+          <defs>
+            <style>{`
+              @keyframes powerFlow {
+                from { stroke-dashoffset: 20; }
+                to { stroke-dashoffset: 0; }
+              }
+              .power-flow-anim {
+                stroke-dasharray: 6 4;
+                animation: powerFlow 0.6s linear infinite;
+              }
+            `}</style>
+            <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
 
-      {/* Control Switches */}
-      <div className="flex items-center justify-center gap-6 mb-8">
+          {/* Left Power Rail (L+ 24V) */}
+          <line x1="30" y1="20" x2="30" y2="190" stroke="#0284c7" strokeWidth="6" strokeLinecap="round" />
+          <text x="30" y="14" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">L+ (24V)</text>
+
+          {/* Right Power Rail (M 0V) */}
+          <line x1="730" y1="20" x2="730" y2="190" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
+          <text x="730" y="14" fill="#94a3b8" fontSize="11" fontWeight="bold" textAnchor="middle">M (0V)</text>
+
+          {/* Rung Number Label */}
+          <text x="42" y="55" fill="#64748b" fontSize="10">Rung 0001</text>
+
+          {/* --- MAIN LINE WIRES --- */}
+          {/* Wire 1: Left Rail to Branch 1 */}
+          <line
+            x1="30" y1="65" x2="100" y2="65"
+            stroke={wireStartHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+            className={wireStartHot ? 'power-flow-anim' : ''}
+          />
+          {/* Node Point 1 */}
+          <circle cx="100" cy="65" r="4" fill={wireStartHot ? '#10b981' : '#334155'} />
+
+          {/* Top Branch to Start Contact */}
+          <line
+            x1="100" y1="65" x2="160" y2="65"
+            stroke={wireStartHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+            className={wireStartHot ? 'power-flow-anim' : ''}
+          />
+
+          {/* --- CONTACT 1: START (NO) --- */}
+          <g transform="translate(160, 65)">
+            {/* Terminal Left */}
+            <line x1="0" y1="0" x2="18" y2="0" stroke={wireStartHot ? '#10b981' : '#334155'} strokeWidth="3" />
+            <line x1="18" y1="-20" x2="18" y2="20" stroke={startPressed ? '#10b981' : '#94a3b8'} strokeWidth="3.5" />
+
+            {/* Bridge when pressed */}
+            {startPressed && (
+              <line x1="18" y1="0" x2="42" y2="0" stroke="#10b981" strokeWidth="4" filter="url(#glow-green)" />
+            )}
+
+            {/* Terminal Right */}
+            <line x1="42" y1="-20" x2="42" y2="20" stroke={startPressed ? '#10b981' : '#94a3b8'} strokeWidth="3.5" />
+            <line x1="42" y1="0" x2="60" y2="0" stroke={wireTopStartOutHot ? '#10b981' : '#334155'} strokeWidth="3" className={wireTopStartOutHot ? 'power-flow-anim' : ''} />
+
+            {/* Labels */}
+            <text x="30" y="-26" fill={startPressed ? '#10b981' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
+              START_BTN
+            </text>
+            <text x="30" y="34" fill={startPressed ? '#10b981' : '#94a3b8'} fontSize="10" textAnchor="middle">
+              I0.0 (NO)
+            </text>
+            <rect
+              x="10" y="40" width="40" height="15" rx="3"
+              fill={startPressed ? '#065f46' : '#1e293b'}
+              stroke={startPressed ? '#10b981' : '#475569'}
+              strokeWidth="1"
+            />
+            <text x="30" y="51" fill={startPressed ? '#34d399' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
+              {startPressed ? 'TRUE' : 'FALSE'}
+            </text>
+          </g>
+
+          {/* Wire from Start to Node 2 */}
+          <line
+            x1="220" y1="65" x2="280" y2="65"
+            stroke={wireTopStartOutHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+            className={wireTopStartOutHot ? 'power-flow-anim' : ''}
+          />
+
+          {/* --- PARALLEL BOTTOM BRANCH (MOTOR_M1 SELF-HOLD) --- */}
+          {/* Drop line */}
+          <line
+            x1="100" y1="65" x2="100" y2="145"
+            stroke={wireStartHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+          />
+          <line
+            x1="100" y1="145" x2="160" y2="145"
+            stroke={wireStartHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+            className={wireStartHot ? 'power-flow-anim' : ''}
+          />
+
+          {/* CONTACT 2: MOTOR_M1 LATCH (NO) */}
+          <g transform="translate(160, 145)">
+            {/* Terminal Left */}
+            <line x1="0" y1="0" x2="18" y2="0" stroke={wireStartHot ? '#10b981' : '#334155'} strokeWidth="3" />
+            <line x1="18" y1="-18" x2="18" y2="18" stroke={motorOn ? '#06b6d4' : '#94a3b8'} strokeWidth="3.5" />
+
+            {/* Bridge when latched */}
+            {motorOn && (
+              <line x1="18" y1="0" x2="42" y2="0" stroke="#06b6d4" strokeWidth="4" filter="url(#glow-cyan)" />
+            )}
+
+            {/* Terminal Right */}
+            <line x1="42" y1="-18" x2="42" y2="18" stroke={motorOn ? '#06b6d4' : '#94a3b8'} strokeWidth="3.5" />
+            <line x1="42" y1="0" x2="60" y2="0" stroke={wireBottomLatchOutHot ? '#06b6d4' : '#334155'} strokeWidth="3" className={wireBottomLatchOutHot ? 'power-flow-anim' : ''} />
+
+            {/* Labels */}
+            <text x="30" y="-24" fill={motorOn ? '#06b6d4' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
+              MOTOR_M1
+            </text>
+            <text x="30" y="32" fill={motorOn ? '#06b6d4' : '#94a3b8'} fontSize="10" textAnchor="middle">
+              Q0.0 (Latch)
+            </text>
+            <rect
+              x="10" y="37" width="40" height="15" rx="3"
+              fill={motorOn ? '#164e63' : '#1e293b'}
+              stroke={motorOn ? '#06b6d4' : '#475569'}
+              strokeWidth="1"
+            />
+            <text x="30" y="48" fill={motorOn ? '#67e8f9' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
+              {motorOn ? 'TRUE' : 'FALSE'}
+            </text>
+          </g>
+
+          {/* Recombine bottom branch to Node 2 */}
+          <line
+            x1="220" y1="145" x2="280" y2="145"
+            stroke={wireBottomLatchOutHot ? '#06b6d4' : '#334155'}
+            strokeWidth="3"
+            className={wireBottomLatchOutHot ? 'power-flow-anim' : ''}
+          />
+          <line
+            x1="280" y1="145" x2="280" y2="65"
+            stroke={wireBottomLatchOutHot ? '#06b6d4' : '#334155'}
+            strokeWidth="3"
+          />
+          {/* Node Point 2 */}
+          <circle cx="280" cy="65" r="4" fill={wireAfterParallelHot ? '#10b981' : '#334155'} />
+
+          {/* Wire from Node 2 to STOP Contact */}
+          <line
+            x1="280" y1="65" x2="360" y2="65"
+            stroke={wireAfterParallelHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+            className={wireAfterParallelHot ? 'power-flow-anim' : ''}
+          />
+
+          {/* --- CONTACT 3: STOP (NC) --- */}
+          <g transform="translate(360, 65)">
+            {/* Terminal Left */}
+            <line x1="0" y1="0" x2="18" y2="0" stroke={wireAfterParallelHot ? '#10b981' : '#334155'} strokeWidth="3" />
+            <line x1="18" y1="-20" x2="18" y2="20" stroke={stopPressed ? '#ef4444' : '#94a3b8'} strokeWidth="3.5" />
+
+            {/* Diagonal Slash for Normally Closed Contact */}
+            <line
+              x1="12"
+              y1="22"
+              x2="48"
+              y2="-22"
+              stroke={stopPressed ? '#ef4444' : wireAfterParallelHot ? '#10b981' : '#94a3b8'}
+              strokeWidth="3"
+              transform={stopPressed ? 'rotate(-25 30 0)' : ''}
+              className={stopPressed ? 'transition-all duration-200' : ''}
+            />
+
+            {/* Terminal Right */}
+            <line x1="42" y1="-20" x2="42" y2="20" stroke={stopPressed ? '#ef4444' : '#94a3b8'} strokeWidth="3.5" />
+            <line x1="42" y1="0" x2="60" y2="0" stroke={wireAfterStopHot ? '#10b981' : '#334155'} strokeWidth="3" className={wireAfterStopHot ? 'power-flow-anim' : ''} />
+
+            {/* Labels */}
+            <text x="30" y="-26" fill={stopPressed ? '#ef4444' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
+              STOP_BTN
+            </text>
+            <text x="30" y="34" fill={stopPressed ? '#ef4444' : '#94a3b8'} fontSize="10" textAnchor="middle">
+              I0.1 (NC)
+            </text>
+            <rect
+              x="5" y="40" width="50" height="15" rx="3"
+              fill={stopPressed ? '#7f1d1d' : '#065f46'}
+              stroke={stopPressed ? '#ef4444' : '#10b981'}
+              strokeWidth="1"
+            />
+            <text x="30" y="51" fill={stopPressed ? '#fca5a5' : '#6ee7b7'} fontSize="9" fontWeight="bold" textAnchor="middle">
+              {stopPressed ? 'OPEN (0)' : 'CLOSED (1)'}
+            </text>
+          </g>
+
+          {/* Wire from Stop to Coil */}
+          <line
+            x1="420" y1="65" x2="540" y2="65"
+            stroke={wireAfterStopHot ? '#10b981' : '#334155'}
+            strokeWidth="3"
+            className={wireAfterStopHot ? 'power-flow-anim' : ''}
+          />
+
+          {/* --- COIL OUTPUT: MOTOR_M1 (Q0.0) --- */}
+          <g transform="translate(540, 65)">
+            {/* Lead wire */}
+            <line x1="0" y1="0" x2="20" y2="0" stroke={wireCoilHot ? '#10b981' : '#334155'} strokeWidth="3" />
+
+            {/* Coil Arcs */}
+            <path
+              d="M 22 -22 A 25 25 0 0 0 22 22"
+              fill="none"
+              stroke={motorOn ? '#10b981' : '#94a3b8'}
+              strokeWidth="3.5"
+            />
+            <path
+              d="M 58 -22 A 25 25 0 0 1 58 22"
+              fill="none"
+              stroke={motorOn ? '#10b981' : '#94a3b8'}
+              strokeWidth="3.5"
+            />
+
+            {/* Center energized bulb / glow */}
+            <circle
+              cx="40" cy="0" r="14"
+              fill={motorOn ? '#10b981' : '#1e293b'}
+              stroke={motorOn ? '#34d399' : '#475569'}
+              strokeWidth="1.5"
+              filter={motorOn ? 'url(#glow-green)' : ''}
+            />
+            <text x="40" y="4" fill={motorOn ? '#022c22' : '#94a3b8'} fontSize="10" fontWeight="bold" textAnchor="middle">
+              M1
+            </text>
+
+            {/* Lead out to right rail */}
+            <line x1="60" y1="0" x2="190" y2="0" stroke={wireCoilHot ? '#10b981' : '#334155'} strokeWidth="3" />
+
+            {/* Labels */}
+            <text x="40" y="-26" fill={motorOn ? '#10b981' : '#e2e8f0'} fontSize="11" fontWeight="bold" textAnchor="middle">
+              MOTOR_M1
+            </text>
+            <text x="40" y="34" fill={motorOn ? '#10b981' : '#94a3b8'} fontSize="10" textAnchor="middle">
+              Q0.0 (Coil)
+            </text>
+            <rect
+              x="12" y="40" width="56" height="15" rx="3"
+              fill={motorOn ? '#065f46' : '#1e293b'}
+              stroke={motorOn ? '#10b981' : '#475569'}
+              strokeWidth="1"
+            />
+            <text x="40" y="51" fill={motorOn ? '#a7f3d0' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
+              {motorOn ? 'ACTIVE (1)' : 'OFF (0)'}
+            </text>
+          </g>
+        </svg>
+      </div>
+
+      {/* Control Push Buttons */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
         <button
           onMouseDown={() => setStartPressed(true)}
           onMouseUp={() => setStartPressed(false)}
           onTouchStart={() => setStartPressed(true)}
           onTouchEnd={() => setStartPressed(false)}
-          className={`px-6 py-3 rounded-xl font-mono text-xs font-bold transition-all shadow-md active:scale-95 border ${
+          className={`flex items-center justify-center gap-3 p-4 rounded-xl font-mono text-sm font-bold transition-all shadow-lg select-none cursor-pointer border ${
             startPressed
-              ? 'bg-emerald-500 text-black border-emerald-400 shadow-emerald-500/50'
-              : 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/40'
+              ? 'bg-emerald-500 text-black border-emerald-300 shadow-emerald-500/50 scale-[0.98]'
+              : 'bg-gradient-to-r from-emerald-950/80 to-emerald-900/60 text-emerald-300 border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-900/80'
           }`}
         >
-          {startPressed ? '▶ [HOLDING START]' : '▶ TEKAN START (NO)'}
+          <div className={`w-3.5 h-3.5 rounded-full ${startPressed ? 'bg-black animate-ping' : 'bg-emerald-400'}`} />
+          <span>{startPressed ? '▶ [HOLDING] START AKTIF (I0.0 = 1)' : '▶ TEKAN TOMBOL START (NO)'}</span>
         </button>
 
         <button
@@ -204,144 +513,41 @@ const StartStopLadderWidget = () => {
           onMouseUp={() => setStopPressed(false)}
           onTouchStart={() => setStopPressed(true)}
           onTouchEnd={() => setStopPressed(false)}
-          className={`px-6 py-3 rounded-xl font-mono text-xs font-bold transition-all shadow-md active:scale-95 border ${
+          className={`flex items-center justify-center gap-3 p-4 rounded-xl font-mono text-sm font-bold transition-all shadow-lg select-none cursor-pointer border ${
             stopPressed
-              ? 'bg-red-500 text-white border-red-400 shadow-red-500/50'
-              : 'bg-red-950/40 text-red-300 border-red-500/30 hover:bg-red-900/40'
+              ? 'bg-red-500 text-white border-red-300 shadow-red-500/50 scale-[0.98]'
+              : 'bg-gradient-to-r from-red-950/80 to-red-900/60 text-red-300 border-red-500/40 hover:border-red-400 hover:bg-red-900/80'
           }`}
         >
-          {stopPressed ? '⏹ [HOLDING STOP]' : '⏹ TEKAN STOP (NC)'}
+          <div className={`w-3.5 h-3.5 rounded-full ${stopPressed ? 'bg-white animate-ping' : 'bg-red-400'}`} />
+          <span>{stopPressed ? '⏹ [HOLDING] STOP MEMUTUS (I0.1 = 0)' : '⏹ TEKAN TOMBOL STOP (NC)'}</span>
         </button>
       </div>
 
-      {/* Visual Ladder Rung */}
-      <div className="p-6 rounded-xl bg-black/70 border border-white/10 font-mono text-xs overflow-x-auto">
-        <div className="flex items-center justify-between min-w-[500px] relative">
-          {/* Left Power Rail */}
-          <div className="w-2 h-24 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-
-          {/* Rung line */}
-          <div className="flex-1 flex flex-col justify-between h-20 px-4">
-            {/* Top Branch: START button & STOP button & Coil */}
-            <div className="flex items-center justify-between relative">
-              {/* Wire Left to Start */}
-              <div
-                className={`h-1 flex-1 transition-colors duration-300 ${
-                  isPowerFlowing ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]' : 'bg-gray-700'
-                }`}
-              />
-
-              {/* START contact */}
-              <div
-                className={`px-3 py-1.5 rounded border text-center font-bold transition-all ${
-                  startPressed
-                    ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                    : 'bg-gray-800 border-gray-600 text-gray-400'
-                }`}
-              >
-                —| |—
-                <div className="text-[10px]">Start (I0.0)</div>
-              </div>
-
-              {/* Wire Start to Stop */}
-              <div
-                className={`h-1 flex-1 transition-colors duration-300 ${
-                  isPowerFlowing || (motorOn && !stopPressed)
-                    ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]'
-                    : 'bg-gray-700'
-                }`}
-              />
-
-              {/* STOP contact */}
-              <div
-                className={`px-3 py-1.5 rounded border text-center font-bold transition-all ${
-                  stopPressed
-                    ? 'bg-red-500/20 border-red-400 text-red-300'
-                    : 'bg-gray-800 border-gray-600 text-gray-300'
-                }`}
-              >
-                —|/|—
-                <div className="text-[10px]">Stop (I0.1)</div>
-              </div>
-
-              {/* Wire Stop to Coil */}
-              <div
-                className={`h-1 flex-1 transition-colors duration-300 ${
-                  motorOn && !stopPressed
-                    ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]'
-                    : 'bg-gray-700'
-                }`}
-              />
-
-              {/* Coil Output */}
-              <div
-                className={`px-4 py-1.5 rounded-full border text-center font-bold transition-all ${
-                  motorOn
-                    ? 'bg-emerald-500 text-black border-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-pulse'
-                    : 'bg-gray-800 border-gray-600 text-gray-400'
-                }`}
-              >
-                —( )—
-                <div className="text-[10px]">Motor_M1 (Q0.0)</div>
-              </div>
-
-              <div
-                className={`h-1 w-6 transition-colors duration-300 ${
-                  motorOn ? 'bg-yellow-400' : 'bg-gray-700'
-                }`}
-              />
-            </div>
-
-            {/* Parallel Latch Branch (Motor_M1 Auxiliary Contact) */}
-            <div className="flex items-center pl-[25%] pr-[45%] relative -mt-3">
-              <div
-                className={`w-0.5 h-6 transition-colors ${
-                  motorOn && !stopPressed ? 'bg-yellow-400' : 'bg-gray-700'
-                }`}
-              />
-              <div
-                className={`h-1 flex-1 transition-colors ${
-                  motorOn && !stopPressed ? 'bg-yellow-400' : 'bg-gray-700'
-                }`}
-              />
-              <div
-                className={`px-3 py-1 rounded border text-center font-bold text-[11px] ${
-                  motorOn
-                    ? 'bg-amber-500/20 border-amber-400 text-amber-300'
-                    : 'bg-gray-800 border-gray-600 text-gray-400'
-                }`}
-              >
-                —| |— Motor_M1 (Self-Hold)
-              </div>
-              <div
-                className={`h-1 flex-1 transition-colors ${
-                  motorOn && !stopPressed ? 'bg-yellow-400' : 'bg-gray-700'
-                }`}
-              />
-              <div
-                className={`w-0.5 h-6 transition-colors ${
-                  motorOn && !stopPressed ? 'bg-yellow-400' : 'bg-gray-700'
-                }`}
-              />
-            </div>
+      {/* Real-time Electrical Explanation Card */}
+      <div className="p-4 rounded-xl bg-bg-surface border border-white/10 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono uppercase text-text-dim font-bold">Penjelasan Alur Daya:</span>
+            <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${statusExplanation.badgeColor}`}>
+              {statusExplanation.badge}
+            </span>
           </div>
-
-          {/* Right Power Rail */}
-          <div className="w-2 h-24 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-mono text-text-dim">Motor Fisik:</span>
+            <span className={`text-xs font-mono font-bold flex items-center gap-1 ${motorOn ? 'text-emerald-400 animate-pulse' : 'text-text-muted'}`}>
+              <Activity size={14} className={motorOn ? 'animate-spin' : ''} />
+              {motorOn ? 'RUNNING (1500 RPM)' : 'STOPPED (0 RPM)'}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-4 flex items-center justify-between text-xs font-mono">
-        <span className="text-text-muted">Status Motor Lapangan:</span>
-        <span
-          className={`font-bold px-3 py-1 rounded-full ${
-            motorOn
-              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-              : 'bg-bg-elevated text-text-dim border border-white/5'
-          }`}
-        >
-          {motorOn ? '● MOTOR BERJALAN (ON)' : '○ MOTOR BERHENTI (OFF)'}
-        </span>
+        <h5 className="font-mono font-bold text-sm text-text-primary">
+          {statusExplanation.title}
+        </h5>
+        <p className="text-xs text-text-muted leading-relaxed">
+          {statusExplanation.desc}
+        </p>
       </div>
     </div>
   );
