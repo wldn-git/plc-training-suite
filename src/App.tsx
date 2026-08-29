@@ -6,6 +6,7 @@ import { Analytics } from '@vercel/analytics/react';
 import Dashboard from '@/pages/Dashboard/index';
 import LearningIndex from '@/pages/Learning/LearningIndex';
 import ModuleDetail from '@/pages/Learning/ModuleDetail';
+import ArticleWebinarPLC from '@/pages/Learning/ArticleWebinarPLC';
 import PLCList from '@/pages/Database/PLCList';
 import AssessmentIndex from './pages/Assessment/index';
 import SettingsPage from '@/pages/Settings/index';
@@ -78,6 +79,7 @@ function App() {
 
           {/* Learning */}
           <Route path="learning" element={<LearningIndex />} />
+          <Route path="learning/article-basic-plc" element={<ArticleWebinarPLC />} />
           <Route path="learning/:moduleId" element={<ModuleDetail />} />
 
           {/* Protocols Center */}

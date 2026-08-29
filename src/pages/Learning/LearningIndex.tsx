@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { LEARNING_LEVELS } from '@/constants/learningModules';
 import { useProgress } from '@/hooks/useProgress';
 import { Card, Badge } from '@/components/ui';
-import { BookOpen, CheckCircle2, Clock, ArrowRight } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, ArrowRight, FileText, Sparkles, Cpu } from 'lucide-react';
 
 export default function LearningIndex() {
   const navigate = useNavigate();
@@ -30,6 +30,43 @@ export default function LearningIndex() {
              />
           </div>
         </Card>
+      </div>
+
+      {/* Featured Article Webinar Banner */}
+      <div 
+        onClick={() => navigate('/learning/article-basic-plc')}
+        className="group relative cursor-pointer overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-r from-bg-surface via-bg-elevated to-accent/10 p-6 shadow-xl transition-all duration-300 hover:border-accent hover:shadow-2xl hover:shadow-accent/10"
+      >
+        <div className="absolute -right-8 -bottom-8 opacity-10 transition-transform duration-500 group-hover:scale-110">
+          <Cpu size={180} className="text-accent" />
+        </div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <Badge variant="cyan" className="flex items-center gap-1">
+                <Sparkles size={10} /> Artikel Terbaru
+              </Badge>
+              <Badge variant="amber">Modul Webinar</Badge>
+              <span className="text-text-dim font-mono text-xs flex items-center gap-1">
+                <Clock size={12} /> 15 min. read
+              </span>
+            </div>
+            <h2 className="text-xl font-mono font-bold text-text-primary group-hover:text-accent transition-colors leading-tight">
+              BASIC PLC: Fondasi Kontrol Otomasi untuk Mendukung Transformasi Industri 4.0
+            </h2>
+            <p className="text-xs text-text-muted line-clamp-2">
+              Modul artikel interaktif lengkap: Pengenalan PLC, Komponen Hardware, Scan Cycle Simulator, Logika Ladder Diagram, SCADA/IIoT, & 3 Studi Kasus Industri.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-xs font-mono font-bold text-accent group-hover:underline">
+              Baca Artikel Lengkap
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent group-hover:translate-x-1 transition-transform">
+              <ArrowRight size={18} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Level Sections */}
