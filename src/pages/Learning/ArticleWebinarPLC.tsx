@@ -2,15 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
-  Share2,
   Bookmark,
   Activity,
-  FileText,
   ExternalLink,
   RotateCcw,
-  Sparkles,
   ChevronRight,
-  Server,
   Workflow,
   Minus,
   Square,
@@ -21,8 +17,7 @@ import {
   Folder,
   Layers,
   ZoomIn,
-  ZoomOut,
-  Maximize2
+  ZoomOut
 } from 'lucide-react';
 
 // ============================================================
