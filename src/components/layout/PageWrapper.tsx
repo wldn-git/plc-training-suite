@@ -31,14 +31,14 @@ const navItems = [
 
 function Sidebar() {
   return (
-    <aside className="hidden lg:flex flex-col w-60 bg-[#1f1f1f] border-r border-[#333333] h-screen sticky top-0 shrink-0 select-none">
+    <aside className="hidden lg:flex flex-col w-60 bg-[#f3f3f3] dark:bg-[#1f1f1f] border-r border-[#e5e5e5] dark:border-[#333333] h-screen sticky top-0 shrink-0 select-none transition-colors">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-[#333333]">
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-[#e5e5e5] dark:border-[#333333]">
         <div className="w-8 h-8 bg-[#0078d4] text-white flex items-center justify-center font-bold text-sm shadow-sm">
           <Cpu className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h1 className="font-sans font-bold text-white text-sm leading-tight">PLC Training</h1>
+          <h1 className="font-sans font-bold text-[#1f1f1f] dark:text-white text-sm leading-tight">PLC Training</h1>
           <p className="font-mono text-[#0078d4] text-xs">Suite v1.0</p>
         </div>
       </div>
@@ -54,13 +54,13 @@ function Sidebar() {
               `flex items-center gap-3 px-3 py-2 text-xs font-sans transition-colors group ${
                 isActive
                   ? 'bg-[#0078d4] text-white font-semibold shadow-sm'
-                  : 'text-[#cccccc] hover:bg-[#2a2d2e] hover:text-white'
+                  : 'text-[#424242] dark:text-[#cccccc] hover:bg-[#e5e5e5] dark:hover:bg-[#2a2d2e] hover:text-[#000000] dark:hover:text-white'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#858585] group-hover:text-[#cccccc]'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#666666] dark:text-[#858585] group-hover:text-[#1f1f1f] dark:group-hover:text-[#cccccc]'}`} />
                 <span>{label}</span>
               </>
             )}
@@ -69,7 +69,7 @@ function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-3 border-t border-[#333333]">
+      <div className="px-5 py-3 border-t border-[#e5e5e5] dark:border-[#333333]">
         <p className="text-[#858585] font-mono text-[11px]">WLDN-Soft © 2025</p>
       </div>
     </aside>
@@ -82,7 +82,7 @@ function Sidebar() {
 
 function MobileNav() {
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1f1f1f] border-t border-[#333333]">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#ffffff] dark:bg-[#1f1f1f] border-t border-[#e5e5e5] dark:border-[#333333] transition-colors">
       <div className="flex items-center justify-around px-2 py-1.5">
         {navItems.slice(0, 5).map(({ path, label, icon: Icon }) => (
           <NavLink

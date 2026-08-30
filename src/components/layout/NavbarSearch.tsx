@@ -147,7 +147,7 @@ export const NavbarSearch: React.FC = () => {
           if (query.trim().length > 0) setIsOpen(true);
         }}
         placeholder="Cari materi, PLC, atau protokol..."
-        className="w-full bg-bg-elevated border border-border rounded-xl pl-10 pr-9 py-2 text-sm text-text-primary placeholder:text-text-dim focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all"
+        className="w-full bg-[#f3f3f3] dark:bg-[#252526] border border-[#e1dfdd] dark:border-[#3f3f46] pl-9 pr-8 py-1.5 text-xs text-[#1f1f1f] dark:text-[#f3f3f3] placeholder:text-text-dim focus:outline-none focus:border-[#0078d4] focus:ring-1 focus:ring-[#0078d4] transition-all font-sans"
       />
 
       {query.length > 0 && (
@@ -156,37 +156,37 @@ export const NavbarSearch: React.FC = () => {
             setQuery('');
             setIsOpen(false);
           }}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary p-0.5 rounded-full hover:bg-bg-surface transition-colors"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary p-0.5"
         >
           <X className="w-3.5 h-3.5" />
         </button>
       )}
 
-      {/* Results Dropdown Overlay (Solid background) */}
+      {/* Results Dropdown Overlay */}
       {isOpen && query.trim().length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden z-50 animate-fade-in max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ffffff] dark:bg-[#1e1e1e] border border-[#e5e5e5] dark:border-[#3f3f46] shadow-2xl overflow-hidden z-50 animate-fade-in max-h-96 overflow-y-auto font-sans">
           {results.length > 0 ? (
-            <div className="p-2 space-y-1">
-              <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-text-dim border-b border-border/50 flex justify-between items-center">
+            <div className="p-1 space-y-0.5">
+              <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-text-dim border-b border-[#e5e5e5] dark:border-[#333333] flex justify-between items-center bg-[#f9f9f9] dark:bg-[#252526]">
                 <span>Hasil Pencarian ({results.length})</span>
-                <span className="text-[9px] lowercase font-sans text-text-muted">Tekan Esc untuk tutup</span>
+                <span className="text-[9px] lowercase font-sans text-text-muted">Esc untuk tutup</span>
               </div>
 
               {results.slice(0, 8).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleSelect(item.path)}
-                  className="w-full flex items-start gap-3 p-2.5 rounded-xl hover:bg-bg-elevated text-left transition-colors group cursor-pointer"
+                  className="w-full flex items-start gap-2.5 p-2 hover:bg-[#f3f3f3] dark:hover:bg-[#2a2d2e] text-left transition-colors group cursor-pointer border border-transparent hover:border-[#e5e5e5] dark:hover:border-[#3f3f46]"
                 >
-                  <div className="mt-0.5 p-1.5 rounded-lg bg-bg-elevated group-hover:bg-bg-surface border border-border/40 transition-colors">
+                  <div className="mt-0.5 p-1 bg-[#ffffff] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#3f3f46]">
                     {item.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-text-primary group-hover:text-orange-500 transition-colors truncate flex items-center justify-between">
+                    <div className="text-xs font-semibold text-[#1f1f1f] dark:text-white group-hover:text-[#0078d4] transition-colors truncate flex items-center justify-between">
                       <span>{item.title}</span>
-                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 text-orange-500 transition-all transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 text-[#0078d4] transition-all transform group-hover:translate-x-0.5" />
                     </div>
-                    <p className="text-[11px] text-text-muted truncate mt-0.5">
+                    <p className="text-[11px] text-[#666666] dark:text-[#9d9d9d] truncate mt-0.5">
                       {item.subtitle}
                     </p>
                   </div>
@@ -194,15 +194,15 @@ export const NavbarSearch: React.FC = () => {
               ))}
 
               {results.length > 8 && (
-                <div className="px-3 py-2 text-center text-xs text-text-muted border-t border-border/50">
+                <div className="px-3 py-1.5 text-center text-[11px] text-text-muted border-t border-[#e5e5e5] dark:border-[#333333]">
                   Menampilkan 8 dari {results.length} hasil
                 </div>
               )}
             </div>
           ) : (
-            <div className="p-6 text-center text-text-muted text-xs">
+            <div className="p-5 text-center text-text-muted text-xs">
               <p className="font-semibold text-text-primary">Tidak ditemukan hasil</p>
-              <p className="mt-1 text-[11px]">Coba kata kunci lain seperti <span className="text-orange-400 font-mono">"Siemens"</span>, <span className="text-orange-400 font-mono">"Ladder"</span>, atau <span className="text-orange-400 font-mono">"Modbus"</span>.</p>
+              <p className="mt-1 text-[11px]">Coba kata kunci lain seperti <span className="text-[#0078d4] font-mono">"Siemens"</span>, <span className="text-[#0078d4] font-mono">"Ladder"</span>, atau <span className="text-[#0078d4] font-mono">"Modbus"</span>.</p>
             </div>
           )}
         </div>
