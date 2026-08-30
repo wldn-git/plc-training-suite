@@ -8,9 +8,6 @@ import {
   RotateCcw,
   ChevronRight,
   Workflow,
-  Minus,
-  Square,
-  X,
   Printer,
   Copy,
   Check,
@@ -527,51 +524,33 @@ export default function ArticleWebinarPLC() {
         {/* ============================================================ */}
         {/* 1. Windows 10 Title Bar */}
         {/* ============================================================ */}
-        <div className="bg-[#2d2d2d] h-9 border-b border-[#3e3e42] flex items-center justify-between select-none px-2">
+        <div className="bg-[#2d2d2d] h-9 border-b border-[#3e3e42] flex items-center justify-between select-none px-3">
           {/* Left: Window Icon & Title */}
-          <div className="flex items-center gap-2 text-xs text-[#cccccc] pl-1 font-medium">
+          <div className="flex items-center gap-2 text-xs text-[#cccccc] font-medium">
             <div className="w-4 h-4 bg-[#0078d4] text-white flex items-center justify-center font-bold text-[10px]">
               W
             </div>
             <span>Modul_Webinar_Basic_PLC_Industri_4.0.pdf — PLC Training Suite Reader</span>
           </div>
 
-          {/* Right: Window Controls (Minimize, Maximize, Close) */}
-          <div className="flex items-center h-full">
-            <button
-              onClick={() => navigate('/learning')}
-              title="Kembali ke Kurikulum"
-              className="h-full px-3 text-[#cccccc] hover:bg-[#3f3f46] transition-colors flex items-center justify-center"
-            >
-              <Minus size={14} />
-            </button>
-            <button
-              title="Maximize"
-              className="h-full px-3 text-[#cccccc] hover:bg-[#3f3f46] transition-colors flex items-center justify-center"
-            >
-              <Square size={12} />
-            </button>
-            <button
-              onClick={() => navigate('/learning')}
-              title="Tutup Window"
-              className="h-full px-3.5 text-[#cccccc] hover:bg-[#e81123] hover:text-white transition-colors flex items-center justify-center"
-            >
-              <X size={14} />
-            </button>
+          {/* Right: Clean Document Info */}
+          <div className="text-[11px] font-mono text-[#858585] hidden sm:flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#107c41]" />
+            <span>Dokumen Aktif (Online)</span>
           </div>
         </div>
 
         {/* ============================================================ */}
         {/* 2. Windows 10 Ribbon / Toolbar Menu */}
         {/* ============================================================ */}
-        <div className="bg-[#252526] border-b border-[#333333] px-3 py-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="bg-[#252526] border-b border-[#333333] px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs sticky top-0 z-20 shadow-sm">
           {/* File Menu Tabs */}
           <div className="flex items-center gap-1">
             <button
               onClick={() => navigate('/learning')}
-              className="px-3 py-1 bg-[#0078d4] text-white font-semibold flex items-center gap-1.5 hover:bg-[#0063b1]"
+              className="px-3 py-1 bg-[#0078d4] text-white font-semibold flex items-center gap-1.5 hover:bg-[#0063b1] transition-colors"
             >
-              <ArrowLeft size={12} /> Kurikulum
+              <ArrowLeft size={12} /> Kembali ke Kurikulum
             </button>
             <button className="px-3 py-1 text-[#cccccc] hover:bg-[#333333]">Beranda</button>
             <button className="px-3 py-1 text-[#cccccc] hover:bg-[#333333]">Tampilan</button>
@@ -609,9 +588,9 @@ export default function ArticleWebinarPLC() {
         {/* ============================================================ */}
         {/* 3. Main Body Split: Explorer Pane (Left) + Document Content (Right) */}
         {/* ============================================================ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[85vh]">
-          {/* Left Navigation Pane (Windows Explorer Tree Style) */}
-          <div className="lg:col-span-3 bg-[#1e1e1e] border-r border-[#333333] p-3 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[85vh] relative items-start">
+          {/* Left Navigation Pane (Sticky when scrolling) */}
+          <div className="lg:col-span-3 bg-[#1e1e1e] border-r border-[#333333] p-3 space-y-4 lg:sticky lg:top-14 lg:self-start lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#858585] uppercase tracking-wider px-2">
               <Folder size={13} className="text-[#0078d4]" />
               <span>Daftar Isi Bab</span>
@@ -622,10 +601,10 @@ export default function ArticleWebinarPLC() {
                 <button
                   key={sec.id}
                   onClick={() => scrollToSection(sec.id)}
-                  className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between border border-transparent transition-colors ${
+                  className={`w-full text-left px-2.5 py-2 flex items-center justify-between border transition-all ${
                     activeSection === sec.id
-                      ? 'bg-[#0078d4] text-white font-medium border-[#005a9e]'
-                      : 'text-[#cccccc] hover:bg-[#2a2d2e]'
+                      ? 'bg-[#0078d4] text-white font-medium border-[#005a9e] shadow-sm'
+                      : 'text-[#cccccc] hover:bg-[#2a2d2e] border-transparent'
                   }`}
                 >
                   <span className="truncate">
@@ -652,7 +631,7 @@ export default function ArticleWebinarPLC() {
           </div>
 
           {/* Right Document Reading Pane */}
-          <div className="lg:col-span-9 bg-[#1e1e1e] p-6 lg:p-10 space-y-10 overflow-y-auto">
+          <div className="lg:col-span-9 bg-[#1e1e1e] p-6 lg:p-10 space-y-10">
             {/* Header Document Banner */}
             <div className="bg-[#252526] border border-[#333333] p-6 border-l-4 border-l-[#0078d4]">
               <div className="flex items-center gap-2 mb-2">
