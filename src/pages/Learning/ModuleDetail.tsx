@@ -6,7 +6,7 @@ import { useProgress } from '@/hooks/useProgress';
 import { QUIZ_BANK } from '@/constants/quizBank';
 import { Button, Badge } from '@/components/ui';
 import { 
-  ArrowLeft, ArrowRight, CheckCircle, BookOpen, Clock, 
+  ArrowLeft, ArrowRight, CheckCircle, Clock, 
   AlertTriangle, Lightbulb, HelpCircle, RefreshCcw, FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
