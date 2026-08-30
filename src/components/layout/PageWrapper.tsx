@@ -2,10 +2,10 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
 import { OfflineBanner } from './OfflineBanner';
+import { AppLogo } from '../common/AppLogo';
 import {
   LayoutDashboard,
   BookOpen,
-  Cpu,
   Database,
   ClipboardCheck,
   Settings,
@@ -33,14 +33,8 @@ function Sidebar() {
   return (
     <aside className="hidden lg:flex flex-col w-60 bg-[#f3f3f3] dark:bg-[#1f1f1f] border-r border-[#e5e5e5] dark:border-[#333333] h-screen sticky top-0 shrink-0 select-none transition-colors">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-[#e5e5e5] dark:border-[#333333]">
-        <div className="w-8 h-8 bg-[#0078d4] text-white flex items-center justify-center font-bold text-sm shadow-sm">
-          <Cpu className="w-4 h-4 text-white" />
-        </div>
-        <div>
-          <h1 className="font-sans font-bold text-[#1f1f1f] dark:text-white text-sm leading-tight">PLC Training</h1>
-          <p className="font-mono text-[#0078d4] text-xs">Suite v1.0</p>
-        </div>
+      <div className="px-5 py-4 border-b border-[#e5e5e5] dark:border-[#333333]">
+        <AppLogo size="md" />
       </div>
 
       {/* Nav */}

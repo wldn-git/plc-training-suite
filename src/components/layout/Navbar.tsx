@@ -5,6 +5,7 @@ import { getLevelLabel } from '@/lib/utils/titles';
 import { UserProfileModal } from './UserProfileModal';
 import { NavbarSearch } from './NavbarSearch';
 import { NotificationsFlyout } from './NotificationsFlyout';
+import { AppLogo } from '../common/AppLogo';
 
 export const Navbar: React.FC = () => {
   const { settings, toggleTheme } = useUserStore();
@@ -17,11 +18,8 @@ export const Navbar: React.FC = () => {
         <NavbarSearch />
 
         {/* Brand for Mobile */}
-        <div className="lg:hidden flex items-center gap-2">
-          <div className="w-7 h-7 bg-[#0078d4] text-white flex items-center justify-center font-bold text-xs shadow-sm">
-            <span>P</span>
-          </div>
-          <span className="font-sans font-bold text-sm text-[#1f1f1f] dark:text-white">PLC Suite</span>
+        <div className="lg:hidden flex items-center">
+          <AppLogo size="sm" showText={true} />
         </div>
 
         {/* Global Actions */}
