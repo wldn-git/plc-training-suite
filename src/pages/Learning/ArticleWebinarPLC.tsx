@@ -520,11 +520,11 @@ export default function ArticleWebinarPLC() {
   return (
     <div className="max-w-7xl mx-auto pb-16 font-sans text-[#f3f3f3]">
       {/* Windows 10 Desktop Application Window Frame */}
-      <div className="border border-[#454545] bg-[#1e1e1e] shadow-2xl overflow-hidden">
+      <div className="border border-[#454545] bg-[#1e1e1e] shadow-2xl overflow-hidden lg:h-[calc(100vh-5.5rem)] flex flex-col">
         {/* ============================================================ */}
         {/* 1. Windows 10 Title Bar */}
         {/* ============================================================ */}
-        <div className="bg-[#2d2d2d] h-9 border-b border-[#3e3e42] flex items-center justify-between select-none px-3">
+        <div className="bg-[#2d2d2d] h-9 border-b border-[#3e3e42] flex items-center justify-between select-none px-3 shrink-0">
           {/* Left: Window Icon & Title */}
           <div className="flex items-center gap-2 text-xs text-[#cccccc] font-medium">
             <div className="w-4 h-4 bg-[#0078d4] text-white flex items-center justify-center font-bold text-[10px]">
@@ -543,7 +543,7 @@ export default function ArticleWebinarPLC() {
         {/* ============================================================ */}
         {/* 2. Windows 10 Ribbon / Toolbar Menu */}
         {/* ============================================================ */}
-        <div className="bg-[#252526] border-b border-[#333333] px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs sticky top-0 z-20 shadow-sm">
+        <div className="bg-[#252526] border-b border-[#333333] px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0 shadow-sm">
           {/* File Menu Tabs */}
           <div className="flex items-center gap-1">
             <button
@@ -586,34 +586,36 @@ export default function ArticleWebinarPLC() {
         </div>
 
         {/* ============================================================ */}
-        {/* 3. Main Body Split: Explorer Pane (Left) + Document Content (Right) */}
+        {/* 3. Main Body Split: Stationary Sidebar (Left) + Scrolling Document (Right) */}
         {/* ============================================================ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[85vh] relative items-start">
-          {/* Left Navigation Pane (Sticky when scrolling) */}
-          <div className="lg:col-span-3 bg-[#1e1e1e] border-r border-[#333333] p-3 space-y-4 lg:sticky lg:top-14 lg:self-start lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#858585] uppercase tracking-wider px-2">
-              <Folder size={13} className="text-[#0078d4]" />
-              <span>Daftar Isi Bab</span>
-            </div>
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-0 overflow-hidden">
+          {/* Left Navigation Pane (Fixed & Stationary / Diam) */}
+          <div className="lg:col-span-3 bg-[#1e1e1e] border-r border-[#333333] p-3 space-y-4 h-full overflow-y-auto select-none flex flex-col justify-between shrink-0">
+            <div className="space-y-3">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#858585] uppercase tracking-wider px-2">
+                <Folder size={13} className="text-[#0078d4]" />
+                <span>Daftar Isi Bab</span>
+              </div>
 
-            <nav className="space-y-0.5 font-sans text-xs">
-              {sections.map((sec, idx) => (
-                <button
-                  key={sec.id}
-                  onClick={() => scrollToSection(sec.id)}
-                  className={`w-full text-left px-2.5 py-2 flex items-center justify-between border transition-all ${
-                    activeSection === sec.id
-                      ? 'bg-[#0078d4] text-white font-medium border-[#005a9e] shadow-sm'
-                      : 'text-[#cccccc] hover:bg-[#2a2d2e] border-transparent'
-                  }`}
-                >
-                  <span className="truncate">
-                    {idx + 1}. {sec.label.replace(/^\d+\.\s*/, '')}
-                  </span>
-                  {activeSection === sec.id && <ChevronRight size={12} />}
-                </button>
-              ))}
-            </nav>
+              <nav className="space-y-0.5 font-sans text-xs">
+                {sections.map((sec, idx) => (
+                  <button
+                    key={sec.id}
+                    onClick={() => scrollToSection(sec.id)}
+                    className={`w-full text-left px-2.5 py-2 flex items-center justify-between border transition-all ${
+                      activeSection === sec.id
+                        ? 'bg-[#0078d4] text-white font-medium border-[#005a9e] shadow-sm'
+                        : 'text-[#cccccc] hover:bg-[#2a2d2e] border-transparent'
+                    }`}
+                  >
+                    <span className="truncate">
+                      {idx + 1}. {sec.label.replace(/^\d+\.\s*/, '')}
+                    </span>
+                    {activeSection === sec.id && <ChevronRight size={12} />}
+                  </button>
+                ))}
+              </nav>
+            </div>
 
             {/* Windows 10 Info Tile */}
             <div className="bg-[#252526] p-3 border border-[#333333] space-y-1.5 text-xs">
@@ -630,8 +632,8 @@ export default function ArticleWebinarPLC() {
             </div>
           </div>
 
-          {/* Right Document Reading Pane */}
-          <div className="lg:col-span-9 bg-[#1e1e1e] p-6 lg:p-10 space-y-10">
+          {/* Right Document Reading Pane (Independently Scrolling) */}
+          <div className="lg:col-span-9 bg-[#1e1e1e] p-6 lg:p-10 space-y-10 h-full overflow-y-auto scrollbar-thin">
             {/* Header Document Banner */}
             <div className="bg-[#252526] border border-[#333333] p-6 border-l-4 border-l-[#0078d4]">
               <div className="flex items-center gap-2 mb-2">
