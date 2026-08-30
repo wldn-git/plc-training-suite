@@ -31,43 +31,37 @@ const navItems = [
 
 function Sidebar() {
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-bg-surface border-r border-border h-screen sticky top-0 shrink-0">
+    <aside className="hidden lg:flex flex-col w-60 bg-[#1f1f1f] border-r border-[#333333] h-screen sticky top-0 shrink-0 select-none">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-        <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center shadow-accent">
-          <Cpu className="w-5 h-5 text-bg" />
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-[#333333]">
+        <div className="w-8 h-8 bg-[#0078d4] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <Cpu className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h1 className="font-mono font-bold text-text-primary text-sm leading-tight">PLC Training</h1>
-          <p className="font-mono text-accent text-xs">Suite v1.0</p>
+          <h1 className="font-sans font-bold text-white text-sm leading-tight">PLC Training</h1>
+          <p className="font-mono text-[#0078d4] text-xs">Suite v1.0</p>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-2 py-3 space-y-1">
         {navItems.map(({ path, label, icon: Icon }) => (
           <NavLink
             key={path}
             to={path}
             end={path === '/'}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-sans transition-all duration-200 group ${
+              `flex items-center gap-3 px-3 py-2 text-xs font-sans transition-colors group ${
                 isActive
-                  ? 'bg-accent/10 text-accent border border-border-accent shadow-accent'
-                  : 'text-text-muted hover:text-text-primary hover:bg-bg-elevated'
+                  ? 'bg-[#0078d4] text-white font-semibold shadow-sm'
+                  : 'text-[#cccccc] hover:bg-[#2a2d2e] hover:text-white'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <Icon className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-accent' : 'text-text-dim group-hover:text-text-muted'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#858585] group-hover:text-[#cccccc]'}`} />
                 <span>{label}</span>
-                {isActive && (
-                  <motion.div
-                    layoutId="sidebar-active"
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-accent"
-                  />
-                )}
               </>
             )}
           </NavLink>
@@ -75,8 +69,8 @@ function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-border">
-        <p className="text-text-dim font-mono text-xs">WLDN-Soft © 2025</p>
+      <div className="px-5 py-3 border-t border-[#333333]">
+        <p className="text-[#858585] font-mono text-[11px]">WLDN-Soft © 2025</p>
       </div>
     </aside>
   );
@@ -88,22 +82,22 @@ function Sidebar() {
 
 function MobileNav() {
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-bg-surface/95 backdrop-blur-md border-t border-border">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1f1f1f] border-t border-[#333333]">
+      <div className="flex items-center justify-around px-2 py-1.5">
         {navItems.slice(0, 5).map(({ path, label, icon: Icon }) => (
           <NavLink
             key={path}
             to={path}
             end={path === '/'}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${
-                isActive ? 'text-accent' : 'text-text-dim'
+              `flex flex-col items-center gap-1 px-3 py-1 text-xs transition-colors ${
+                isActive ? 'text-[#0078d4] font-bold' : 'text-[#858585]'
               }`
             }
           >
-            {({ isActive }) => (
+            {() => (
               <>
-                <Icon className={`w-5 h-5 transition-transform ${isActive ? 'scale-110' : ''}`} />
+                <Icon className="w-4 h-4" />
                 <span className="text-[10px] font-sans">{label}</span>
               </>
             )}

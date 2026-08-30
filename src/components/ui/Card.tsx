@@ -12,11 +12,12 @@ interface CardProps {
 export const Card: React.FC<CardProps> = ({ children, className = '', elevated = false, hoverable = false, onClick }) => {
   return (
     <motion.div
-      whileHover={hoverable ? { y: -4, boxShadow: '0 12px 30px rgba(0,0,0,0.5)' } : {}}
+      whileHover={hoverable ? { y: -2 } : {}}
       onClick={onClick}
       className={`
         ${elevated ? 'bg-bg-elevated' : 'bg-bg-surface'}
-        rounded-xl border border-border shadow-card overflow-hidden
+        border border-border shadow-sm
+        ${hoverable ? 'hover:border-[#0078d4]/60 transition-colors' : ''}
         ${onClick ? 'cursor-pointer' : ''}
         ${className}
       `}

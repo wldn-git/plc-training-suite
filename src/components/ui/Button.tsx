@@ -13,25 +13,25 @@ interface ButtonProps extends HTMLMotionProps<'button'> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', isLoading, fullWidth, leftIcon, rightIcon, children, ...props }, ref) => {
     const variants = {
-      primary: 'bg-accent text-bg hover:bg-accent-dim shadow-accent border-transparent',
+      primary: 'bg-[#0078d4] text-white hover:bg-[#0063b1] border-[#005a9e] shadow-sm',
       ghost: 'bg-transparent text-text-muted hover:text-text-primary hover:bg-bg-elevated border-transparent',
-      danger: 'bg-danger/10 text-danger border-danger/30 hover:bg-danger/20',
-      outline: 'bg-transparent text-text-primary border-border hover:border-border-accent hover:text-accent',
+      danger: 'bg-[#d13438] text-white hover:bg-[#a80000] border-[#a80000]',
+      outline: 'bg-transparent text-text-primary border-border hover:border-[#0078d4] hover:text-[#0078d4] hover:bg-[#0078d4]/10',
     };
 
     const sizes = {
-      sm: 'px-3 py-1.5 text-xs',
-      md: 'px-4 py-2.5 text-sm',
-      lg: 'px-6 py-3 text-base',
+      sm: 'px-3 py-1 text-xs',
+      md: 'px-4 py-2 text-sm',
+      lg: 'px-6 py-2.5 text-base',
     };
 
     return (
       <motion.button
         ref={ref}
-        whileTap={{ scale: 0.97 }}
+        whileTap={{ scale: 0.98 }}
         className={`
-          inline-flex items-center justify-center gap-2 rounded-xl font-sans font-semibold 
-          border transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none
+          inline-flex items-center justify-center gap-2 font-sans font-semibold 
+          border transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none
           ${fullWidth ? 'w-full' : ''}
           ${variants[variant]} 
           ${sizes[size]} 
