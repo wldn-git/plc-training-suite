@@ -4,90 +4,117 @@ import { ALL_MODULES, LEARNING_LEVELS } from '@/constants/learningModules';
 import type { ContentBlock } from '@/constants/learningModules';
 import { useProgress } from '@/hooks/useProgress';
 import { QUIZ_BANK } from '@/constants/quizBank';
-import { Button, Card, Badge } from '@/components/ui';
+import { Button, Badge } from '@/components/ui';
 import { 
   ArrowLeft, ArrowRight, CheckCircle, BookOpen, Clock, 
-  AlertTriangle, Lightbulb, HelpCircle, RefreshCcw 
+  AlertTriangle, Lightbulb, HelpCircle, RefreshCcw, FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BlockRenderer = ({ block }: { block: ContentBlock }) => {
   switch (block.type) {
     case 'text':
-      return <p className="text-text-primary/90 leading-relaxed mb-6">{block.body}</p>;
+      return (
+        <p className="text-[#242424] dark:text-[#e0e0e0] leading-relaxed mb-6 text-sm lg:text-base font-sans">
+          {block.body}
+        </p>
+      );
     
     case 'code':
       return (
-        <div className="mb-6 rounded-xl overflow-hidden border border-white/10 shadow-lg">
-          <div className="bg-bg-elevated px-4 py-2 border-b border-white/5 text-xs font-mono text-text-muted flex gap-2">
-            <span className="w-3 h-3 rounded-full bg-danger/50" />
-            <span className="w-3 h-3 rounded-full bg-warning/50" />
-            <span className="w-3 h-3 rounded-full bg-success/50" />
+        <div className="mb-6 border border-[#e5e5e5] dark:border-[#333333] shadow-sm font-mono text-xs">
+          <div className="bg-[#f3f3f3] dark:bg-[#2d2d2d] px-4 py-2 border-b border-[#e5e5e5] dark:border-[#333333] text-[#666666] dark:text-[#cccccc] flex items-center justify-between">
+            <span className="font-bold text-[11px]">KODE / SINTAKS PLC</span>
+            <span className="text-[10px] text-[#858585]">IEC 61131-3</span>
           </div>
-          <pre className="bg-black/80 p-5 overflow-x-auto">
-            <code className="text-sm font-mono text-accent whitespace-pre">{block.body}</code>
+          <pre className="bg-[#181818] p-4 overflow-x-auto text-[#4ade80] leading-relaxed">
+            <code>{block.body}</code>
           </pre>
-          {block.caption && <div className="bg-bg-elevated px-4 py-2 text-xs text-text-dim text-center border-t border-white/5">{block.caption}</div>}
+          {block.caption && (
+            <div className="bg-[#f9f9f9] dark:bg-[#252526] px-4 py-2 text-xs text-[#666666] dark:text-[#9d9d9d] border-t border-[#e5e5e5] dark:border-[#333333]">
+              {block.caption}
+            </div>
+          )}
         </div>
       );
 
     case 'warning':
       return (
-        <div className="mb-6 bg-warning/10 border border-warning/30 rounded-xl p-4 flex gap-4 items-start shadow-sm">
-          <AlertTriangle className="text-warning shrink-0 mt-0.5" size={20} />
-          <p className="text-warning-light text-sm leading-relaxed">{block.body}</p>
+        <div className="mb-6 bg-[#fffbeb] dark:bg-[#ffb900]/10 border-l-4 border-[#ffb900] p-4 flex gap-3 items-start shadow-sm">
+          <AlertTriangle className="text-[#b45309] dark:text-[#ffb900] shrink-0 mt-0.5" size={18} />
+          <div className="text-xs lg:text-sm text-[#78350f] dark:text-[#fde047] leading-relaxed font-medium">
+            <span className="font-bold block mb-0.5">PERHATIAN:</span>
+            {block.body}
+          </div>
         </div>
       );
 
     case 'tip':
       return (
-        <div className="mb-6 bg-accent/10 border border-accent/30 rounded-xl p-4 flex gap-4 items-start shadow-sm">
-          <Lightbulb className="text-accent shrink-0 mt-0.5" size={20} />
-          <p className="text-blue-100 text-sm leading-relaxed">{block.body}</p>
+        <div className="mb-6 bg-[#eff6ff] dark:bg-[#0078d4]/10 border-l-4 border-[#0078d4] p-4 flex gap-3 items-start shadow-sm">
+          <Lightbulb className="text-[#0078d4] dark:text-[#38bdf8] shrink-0 mt-0.5" size={18} />
+          <div className="text-xs lg:text-sm text-[#1e40af] dark:text-[#93c5fd] leading-relaxed font-medium">
+            <span className="font-bold block mb-0.5">TIPS & PETUNJUK:</span>
+            {block.body}
+          </div>
         </div>
       );
 
     case 'table':
       if (!block.rows || block.rows.length === 0) return null;
       return (
-        <div className="mb-6 overflow-hidden rounded-xl border border-white/10 shadow-sm mt-4">
+        <div className="mb-6 border border-[#e5e5e5] dark:border-[#333333] shadow-sm mt-4 font-sans text-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-text-dim uppercase bg-bg-elevated/50 font-mono">
+            <table className="w-full text-left">
+              <thead className="bg-[#f3f3f3] dark:bg-[#2d2d2d] text-[#1f1f1f] dark:text-white font-bold border-b border-[#e5e5e5] dark:border-[#333333]">
                 <tr>
                   {block.rows[0].map((header, i) => (
-                    <th key={i} className="px-6 py-4">{header}</th>
+                    <th key={i} className="px-4 py-3">{header}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[#e5e5e5] dark:divide-[#333333]">
                 {block.rows.slice(1).map((row, i) => (
-                  <tr key={i} className="bg-bg-surface border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <tr key={i} className="bg-[#ffffff] dark:bg-[#1e1e1e] hover:bg-[#f9f9f9] dark:hover:bg-[#252526] transition-colors">
                     {row.map((cell, j) => (
-                      <td key={j} className="px-6 py-4 font-medium text-text-primary/90">{cell}</td>
+                      <td key={j} className="px-4 py-3 text-[#242424] dark:text-[#cccccc]">{cell}</td>
                     ))}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {block.caption && <div className="bg-bg-elevated px-4 py-2 text-xs text-text-dim text-center border-t border-white/5">{block.caption}</div>}
+          {block.caption && (
+            <div className="bg-[#f9f9f9] dark:bg-[#252526] px-4 py-2 text-[11px] text-[#666666] dark:text-[#9d9d9d] border-t border-[#e5e5e5] dark:border-[#333333]">
+              {block.caption}
+            </div>
+          )}
         </div>
       );
       
     case 'formula':
       return (
-        <div className="mb-6 border-l-4 border-accent bg-accent/5 p-5 rounded-r-xl">
-          <div className="font-mono text-lg text-accent text-center tracking-wider">{block.body}</div>
-          {block.caption && <div className="mt-3 text-xs text-text-dim text-center">{block.caption}</div>}
+        <div className="mb-6 border-l-4 border-[#0078d4] bg-[#f3f3f3] dark:bg-[#252526] p-4 shadow-sm">
+          <div className="font-mono text-sm lg:text-base font-bold text-[#0078d4] dark:text-[#38bdf8] text-center tracking-wider">
+            {block.body}
+          </div>
+          {block.caption && (
+            <div className="mt-2 text-xs text-[#666666] dark:text-[#9d9d9d] text-center">
+              {block.caption}
+            </div>
+          )}
         </div>
       );
 
     case 'image':
       return (
-        <div className="mb-6 rounded-xl overflow-hidden border border-white/10">
+        <div className="mb-6 border border-[#e5e5e5] dark:border-[#333333] overflow-hidden shadow-sm">
           <img src={block.body} alt={block.caption || 'Module image'} className="w-full h-auto object-cover max-h-96" />
-          {block.caption && <div className="bg-bg-elevated px-4 py-2 text-xs text-text-dim text-center border-t border-white/5">{block.caption}</div>}
+          {block.caption && (
+            <div className="bg-[#f9f9f9] dark:bg-[#252526] px-4 py-2 text-xs text-[#666666] dark:text-[#9d9d9d] text-center border-t border-[#e5e5e5] dark:border-[#333333]">
+              {block.caption}
+            </div>
+          )}
         </div>
       );
 
@@ -141,9 +168,9 @@ export default function ModuleDetail() {
 
   if (!module) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh]">
-        <h2 className="text-xl font-mono font-bold">Modul tidak ditemukan</h2>
-        <Button variant="ghost" onClick={() => navigate('/learning')} className="mt-4">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-6">
+        <h2 className="text-xl font-bold text-[#1f1f1f] dark:text-white">Modul Tidak Ditemukan</h2>
+        <Button variant="primary" onClick={() => navigate('/learning')} className="mt-4">
           Kembali ke Kurikulum
         </Button>
       </div>
@@ -209,67 +236,79 @@ export default function ModuleDetail() {
   }, [quizState.isFinished, quizState.answers, moduleQuestions]);
 
   return (
-    <div className="max-w-4xl mx-auto pb-20 animate-fade-in">
-      {/* Navigation Header */}
-      <div className="flex items-center justify-between mb-8 group">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          leftIcon={<ArrowLeft size={16} />}
+    <div className="max-w-5xl mx-auto pb-16 font-sans select-none">
+      {/* Top Action Ribbon */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <button 
           onClick={() => navigate('/learning')}
+          className="px-3 py-1.5 bg-[#f3f3f3] dark:bg-[#252526] hover:bg-[#e5e5e5] dark:hover:bg-[#2a2d2e] text-[#1f1f1f] dark:text-[#cccccc] text-xs font-semibold border border-[#e5e5e5] dark:border-[#3f3f46] flex items-center gap-2 transition-colors"
         >
-          Kembali ke Kurikulum
-        </Button>
+          <ArrowLeft size={14} /> Kembali ke Kurikulum
+        </button>
+
         <div className="flex items-center gap-2">
-           {levelDef && <Badge variant={levelDef.color as any}>{levelDef.title}</Badge>}
-           <span className="text-text-dim font-mono text-xs">Modul {moduleIndex + 1} / {ALL_MODULES.length}</span>
+          {levelDef && <Badge variant={levelDef.color as any}>{levelDef.title}</Badge>}
+          <span className="text-[#666666] dark:text-[#858585] font-mono text-xs px-2 py-0.5 bg-[#f3f3f3] dark:bg-[#252526] border border-[#e5e5e5] dark:border-[#3f3f46]">
+            Modul {moduleIndex + 1} / {ALL_MODULES.length}
+          </span>
         </div>
       </div>
 
-      <Card className="overflow-hidden border-border/50 shadow-2xl relative">
-        {/* Progress Bar Top */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-border/30">
+      {/* Windows 10 Document Card */}
+      <div className="border border-[#e5e5e5] dark:border-[#3f3f46] bg-[#ffffff] dark:bg-[#1e1e1e] shadow-md overflow-hidden">
+        {/* Progress Bar Line */}
+        <div className="w-full h-1 bg-[#e5e5e5] dark:bg-[#333333]">
           <div 
-             className="h-full bg-accent transition-all duration-300" 
-             style={{ width: `${showKnowledgeCheck ? 100 : ((safePageIndex + 1) / module.pages.length) * 100}%` }}
+            className="h-full bg-[#0078d4] transition-all duration-300" 
+            style={{ width: `${showKnowledgeCheck ? 100 : ((safePageIndex + 1) / module.pages.length) * 100}%` }}
           />
         </div>
 
         {/* Module Title Section */}
-        <div className="p-8 lg:p-12 border-b border-white/5 bg-gradient-to-b from-bg-surface to-bg-base relative overflow-hidden">
-          <BookOpen size={150} className="absolute -right-10 -bottom-10 text-white/[0.02] rotate-12" />
-          
-          <div className="flex items-center gap-3 mb-4 relative z-10">
-             <div className="flex items-center gap-4 text-text-dim text-xs font-mono">
-               <div className="flex items-center gap-1.5"><Clock size={12} /> {module.estimatedMinutes} min. read</div>
-               <div className="w-1 h-1 rounded-full bg-border" />
-               <div className="flex items-center gap-1.5 font-bold"><CheckCircle size={12} className={isCompleted ? 'text-success' : 'text-text-dim'} /> {isCompleted ? 'Selesai' : 'Belum Selesai'}</div>
-             </div>
+        <div className="p-6 lg:p-8 border-b border-[#e5e5e5] dark:border-[#333333] bg-[#f9f9f9] dark:bg-[#252526]">
+          <div className="flex flex-wrap items-center gap-3 mb-3 text-xs font-mono text-[#666666] dark:text-[#858585]">
+            <div className="flex items-center gap-1.5">
+              <Clock size={13} className="text-[#0078d4]" /> {module.estimatedMinutes} min. read
+            </div>
+            <span>•</span>
+            <div className="flex items-center gap-1.5 font-bold">
+              <CheckCircle size={13} className={isCompleted ? 'text-[#107c41]' : 'text-[#858585]'} />
+              <span className={isCompleted ? 'text-[#107c41]' : 'text-[#666666] dark:text-[#858585]'}>
+                {isCompleted ? 'Selesai' : 'Belum Selesai'}
+              </span>
+            </div>
           </div>
-          <h1 className="text-3xl lg:text-4xl font-mono font-black text-text-primary leading-tight relative z-10">
+
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#1f1f1f] dark:text-white leading-tight">
             {module.title}
           </h1>
-          <p className="text-text-muted mt-4 text-lg relative z-10">
+          <p className="text-xs lg:text-sm text-[#555555] dark:text-[#cccccc] mt-2 leading-relaxed">
             {module.description}
           </p>
         </div>
 
         {/* Page Content Section */}
-        <div className="p-8 lg:p-12 min-h-[400px]">
+        <div className="p-6 lg:p-10 min-h-[350px]">
           <AnimatePresence mode="wait">
             {!showKnowledgeCheck ? (
               <motion.div
                 key="content"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.15 }}
               >
-                <h2 className="text-2xl font-mono font-bold text-accent mb-8 pb-3 border-b border-white/10 flex justify-between items-end">
-                  <span>{currentPage.title}</span>
-                  <span className="text-xs text-text-dim font-mono bg-bg-elevated px-2 py-1 rounded">Page {safePageIndex + 1} of {module.pages.length}</span>
-                </h2>
+                <div className="flex items-center justify-between pb-3 mb-6 border-b border-[#e5e5e5] dark:border-[#333333]">
+                  <h2 className="text-lg lg:text-xl font-bold text-[#0078d4] dark:text-[#38bdf8] flex items-center gap-2">
+                    <FileText size={18} />
+                    <span>{currentPage.title}</span>
+                  </h2>
+                  <span className="text-xs font-mono font-bold text-[#666666] dark:text-[#cccccc] bg-[#f3f3f3] dark:bg-[#2d2d2d] px-2.5 py-1 border border-[#e5e5e5] dark:border-[#3f3f46]">
+                    Halaman {safePageIndex + 1} / {module.pages.length}
+                  </span>
+                </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {currentPage.content.map((block, index) => (
                     <BlockRenderer key={index} block={block} />
                   ))}
@@ -278,37 +317,41 @@ export default function ModuleDetail() {
             ) : !quizState.isFinished ? (
               <motion.div
                 key="quiz"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-8"
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-6"
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-accent/20 text-accent">
-                    <HelpCircle size={24} />
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="p-2 bg-[#0078d4] text-white">
+                    <HelpCircle size={20} />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-mono font-bold text-text-primary">Knowledge Check</h2>
-                    <p className="text-text-muted text-xs uppercase tracking-widest font-bold">Question {quizState.currentQuestionIndex + 1} of {moduleQuestions.length}</p>
+                    <h2 className="text-lg font-bold text-[#1f1f1f] dark:text-white">Uji Pemahaman Singkat</h2>
+                    <p className="text-[#666666] dark:text-[#858585] text-xs font-mono">
+                      Pertanyaan {quizState.currentQuestionIndex + 1} dari {moduleQuestions.length}
+                    </p>
                   </div>
                 </div>
 
-                <div className="bg-bg-elevated rounded-2xl p-8 border border-white/5 shadow-inner">
-                  <h3 className="text-xl font-bold text-text-primary mb-8 leading-relaxed">
+                <div className="bg-[#f9f9f9] dark:bg-[#252526] p-6 border border-[#e5e5e5] dark:border-[#333333]">
+                  <h3 className="text-sm lg:text-base font-bold text-[#1f1f1f] dark:text-white mb-6 leading-relaxed">
                     {moduleQuestions[quizState.currentQuestionIndex].question}
                   </h3>
 
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-2.5">
                     {moduleQuestions[quizState.currentQuestionIndex].options.map((option, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleQuizAnswer(idx)}
-                        className="flex items-center gap-4 p-4 rounded-xl border border-border bg-black/20 hover:border-accent hover:bg-accent/5 transition-all text-left group"
+                        className="flex items-center gap-3 p-3.5 border border-[#e5e5e5] dark:border-[#3f3f46] bg-[#ffffff] dark:bg-[#1e1e1e] hover:border-[#0078d4] hover:bg-[#0078d4]/5 transition-all text-left group"
                       >
-                        <div className="w-8 h-8 shrink-0 rounded-lg bg-bg-elevated border border-border flex items-center justify-center font-mono text-xs font-bold group-hover:bg-accent group-hover:text-bg transition-colors">
+                        <div className="w-7 h-7 shrink-0 bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#3f3f46] flex items-center justify-center font-mono text-xs font-bold text-[#1f1f1f] dark:text-white group-hover:bg-[#0078d4] group-hover:text-white group-hover:border-[#0078d4] transition-colors">
                           {String.fromCharCode(65 + idx)}
                         </div>
-                        <span className="text-text-primary text-sm font-medium">{option}</span>
+                        <span className="text-[#242424] dark:text-[#cccccc] text-xs lg:text-sm font-medium leading-relaxed">
+                          {option}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -317,26 +360,31 @@ export default function ModuleDetail() {
             ) : (
               <motion.div
                 key="result"
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-10"
+                className="text-center py-8"
               >
-                <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${quizScore >= 80 ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}>
-                  {quizScore >= 80 ? <CheckCircle size={40} /> : <AlertTriangle size={40} />}
+                <div className={`w-16 h-16 flex items-center justify-center mx-auto mb-4 ${
+                  quizScore >= 80 ? 'bg-[#107c41] text-white' : 'bg-[#ffb900] text-black'
+                }`}>
+                  {quizScore >= 80 ? <CheckCircle size={32} /> : <AlertTriangle size={32} />}
                 </div>
-                <h3 className="text-3xl font-mono font-black mb-2 italic tracking-tighter uppercase">
-                  {quizScore >= 80 ? 'Pemahaman Kuat!' : 'Perlu Review'}
+                <h3 className="text-2xl font-bold mb-2 text-[#1f1f1f] dark:text-white">
+                  {quizScore >= 80 ? 'Pemahaman Sangat Baik!' : 'Perlu Ditinjau Kembali'}
                 </h3>
-                <p className="text-text-muted mb-8 max-w-md mx-auto">
-                  Kamu menjawab {quizState.answers.filter((ans, idx) => ans === moduleQuestions[idx].correctIndex).length} dari {moduleQuestions.length} soal dengan benar.
+                <p className="text-xs lg:text-sm text-[#666666] dark:text-[#858585] mb-6 max-w-md mx-auto">
+                  Anda menjawab {quizState.answers.filter((ans, idx) => ans === moduleQuestions[idx].correctIndex).length} dari {moduleQuestions.length} pertanyaan dengan tepat.
                 </p>
 
-                <div className="flex flex-col items-center gap-4">
-                  <div className="text-5xl font-mono font-black text-accent">{quizScore}%</div>
+                <div className="flex flex-col items-center gap-3">
+                  <div className="text-4xl font-mono font-black text-[#0078d4]">{quizScore}%</div>
                   {quizScore < 80 && (
-                    <Button variant="ghost" size="sm" leftIcon={<RefreshCcw size={14} />} onClick={() => setQuizState({ currentQuestionIndex: 0, answers: [], isFinished: false })}>
-                      Ulangi Kuis
-                    </Button>
+                    <button
+                      onClick={() => setQuizState({ currentQuestionIndex: 0, answers: [], isFinished: false })}
+                      className="px-3 py-1.5 bg-[#333333] hover:bg-[#3e3e42] text-white text-xs font-semibold flex items-center gap-1.5 border border-[#474747]"
+                    >
+                      <RefreshCcw size={12} /> Ulangi Kuis
+                    </button>
                   )}
                 </div>
               </motion.div>
@@ -344,35 +392,67 @@ export default function ModuleDetail() {
           </AnimatePresence>
         </div>
 
-        {/* Action Footer */}
-        <div className="px-8 py-6 bg-bg-elevated/50 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex gap-3 w-full sm:w-auto overflow-x-auto scrollbar-hide shrink-0">
+        {/* Windows 10 Action Footer */}
+        <div className="px-6 py-4 bg-[#f3f3f3] dark:bg-[#252526] border-t border-[#e5e5e5] dark:border-[#333333] flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
             {showKnowledgeCheck ? (
-              <Button variant="outline" leftIcon={<ArrowLeft size={18} />} onClick={handlePrevPage}>Kembali ke Materi</Button>
+              <button
+                onClick={handlePrevPage}
+                className="px-3 py-2 bg-[#ffffff] dark:bg-[#1e1e1e] hover:bg-[#eaeaea] dark:hover:bg-[#2d2d2d] text-[#1f1f1f] dark:text-white font-medium border border-[#e5e5e5] dark:border-[#3f3f46] flex items-center gap-1.5 transition-colors"
+              >
+                <ArrowLeft size={14} /> Kembali ke Materi
+              </button>
             ) : safePageIndex > 0 ? (
-              <Button variant="outline" leftIcon={<ArrowLeft size={18} />} onClick={handlePrevPage}>Halaman Seb.</Button>
+              <button
+                onClick={handlePrevPage}
+                className="px-3 py-2 bg-[#ffffff] dark:bg-[#1e1e1e] hover:bg-[#eaeaea] dark:hover:bg-[#2d2d2d] text-[#1f1f1f] dark:text-white font-medium border border-[#e5e5e5] dark:border-[#3f3f46] flex items-center gap-1.5 transition-colors"
+              >
+                <ArrowLeft size={14} /> Halaman Sebelumnya
+              </button>
             ) : prevModule ? (
-              <Button variant="ghost" leftIcon={<ArrowLeft size={18} />} onClick={() => navigate(`/learning/${prevModule.id}`)}>Modul Seb.</Button>
-            ) : <div />}
+              <button
+                onClick={() => navigate(`/learning/${prevModule.id}`)}
+                className="px-3 py-2 bg-[#ffffff] dark:bg-[#1e1e1e] hover:bg-[#eaeaea] dark:hover:bg-[#2d2d2d] text-[#666666] dark:text-[#cccccc] font-medium border border-[#e5e5e5] dark:border-[#3f3f46] flex items-center gap-1.5 transition-colors"
+              >
+                <ArrowLeft size={14} /> Modul Sebelumnya
+              </button>
+            ) : null}
+          </div>
 
+          <div className="flex items-center gap-2">
             {!showKnowledgeCheck && !isLastPage ? (
-              <Button variant="primary" rightIcon={<ArrowRight size={18} />} onClick={handleNextPage}>Selanjutnya</Button>
+              <button
+                onClick={handleNextPage}
+                className="px-4 py-2 bg-[#0078d4] hover:bg-[#0063b1] text-white font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
+              >
+                <span>Halaman Selanjutnya</span>
+                <ArrowRight size={14} />
+              </button>
             ) : !showKnowledgeCheck && isLastPage && moduleQuestions.length > 0 ? (
-               <Button variant="primary" rightIcon={<HelpCircle size={18} />} onClick={handleNextPage}>Mulai Kuis Modul</Button>
+              <button
+                onClick={handleNextPage}
+                className="px-4 py-2 bg-[#0078d4] hover:bg-[#0063b1] text-white font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
+              >
+                <HelpCircle size={14} />
+                <span>Mulai Kuis Modul</span>
+              </button>
             ) : (isLastPage || showKnowledgeCheck) && (
-              <Button 
-                variant={isCompleted ? 'ghost' : 'primary'}
-                leftIcon={<CheckCircle size={18} />}
+              <button
                 onClick={handleComplete}
                 disabled={showKnowledgeCheck && !quizState.isFinished}
-                className={isCompleted ? 'text-success hover:bg-success/10' : 'shadow-lg shadow-success/20 animate-pulse-glow'}
+                className={`px-4 py-2 font-semibold flex items-center gap-1.5 shadow-sm transition-colors ${
+                  isCompleted
+                    ? 'bg-[#107c41] text-white'
+                    : 'bg-[#0078d4] hover:bg-[#0063b1] text-white disabled:opacity-50'
+                }`}
               >
-                {isCompleted ? 'Materi Selesai' : 'Tandai Selesai & Lanjut'}
-              </Button>
+                <CheckCircle size={14} />
+                <span>{isCompleted ? 'Materi Selesai (Lanjut)' : 'Tandai Selesai & Lanjut'}</span>
+              </button>
             )}
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
